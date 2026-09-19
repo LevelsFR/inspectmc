@@ -915,7 +915,8 @@ public final class DumpService {
                     .filter(Files::isRegularFile)
                     .filter(path -> {
                         String name = path.getFileName().toString();
-                        return name.startsWith(prefix) && name.endsWith(suffix);
+                        return name.startsWith(prefix) && name.endsWith(suffix)
+                                && !name.equals(baseName + "-latest." + extension);
                     })
                     .sorted(Comparator.comparingLong(DumpService::lastModified).reversed())
                     .toList();
