@@ -1,8 +1,8 @@
 # InspectMC changelog
 
-## 1.0.0 (release candidate)
+## 1.0.0
 
-Release candidate for Minecraft 1.21.1 on Fabric and NeoForge.
+Initial public release for Minecraft 1.21.1 on Fabric and NeoForge.
 
 ### New
 
