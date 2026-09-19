@@ -4,10 +4,12 @@ InspectMC is an in-game development and inspection toolkit for Minecraft modpack
 
 ## Target
 
-- Minecraft 1.21.1 only (strict version check)
+- Public 1.0.0 release: Minecraft 1.21.1 only (strict version check)
 - Java 21
 - Fabric
 - NeoForge
+
+Experimental forward-port work for Minecraft 26.2 and 26.3 is kept under `versions/` for development and is not part of the public 1.0.0 release.
 
 ## Commands
 
