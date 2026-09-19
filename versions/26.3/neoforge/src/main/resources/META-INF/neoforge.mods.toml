@@ -1,0 +1,48 @@
+modLoader = "javafml"
+loaderVersion = "[4,)"
+license = "MIT"
+
+[[mods]]
+modId = "inspectmc"
+version = "${version}"
+displayName = "InspectMC"
+authors="LevelsFR"
+iconFile="icon.png"
+description = '''
+A development and inspection toolkit for Minecraft modpack creators, datapack authors and mod developers.
+'''
+
+[[dependencies.inspectmc]]
+modId = "neoforge"
+type = "required"
+versionRange = "[26.3,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.inspectmc]]
+modId = "minecraft"
+type = "required"
+versionRange = "[26.3]"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.inspectmc]]
+modId = "cloth_config"
+type = "optional"
+versionRange = "[26.3,)"
+ordering = "AFTER"
+side = "CLIENT"
+
+[[dependencies.inspectmc]]
+modId = "cobblemon"
+type = "optional"
+versionRange = "[26.3,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.inspectmc]]
+modId = "os_cobblemon_library"
+type = "optional"
+versionRange = "[1.1.0,)"
+ordering = "AFTER"
+side = "BOTH"

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "inspectmc",
+  "version": "${version}",
+  "name": "InspectMC",
+  "description": "A development and inspection toolkit for Minecraft modpack creators, datapack authors and mod developers.",
+  "authors": ["LevelsFR"],
+  "icon": "icon.png",
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["com.levelsfr.inspectmc.fabric.InspectMCFabric"],
+    "client": ["com.levelsfr.inspectmc.fabric.client.InspectMCFabricClient"],
+    "modmenu": ["com.levelsfr.inspectmc.fabric.client.InspectMCModMenu"]
+  },
+  "depends": {
+    "fabricloader": ">=0.19.5",
+    "minecraft": "=26.3",
+    "java": ">=25",
+    "fabric-api": "*"
+  },
+  "suggests": {
+    "cloth-config": "*",
+    "modmenu": "*",
+    "cobblemon": "*",
+    "os_cobblemon_library": "*"
+  }
+}

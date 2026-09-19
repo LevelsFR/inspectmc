@@ -1,0 +1,225 @@
+plugins {
+    id 'dev.architectury.loom' version '1.17-SNAPSHOT' apply false
+    id 'architectury-plugin' version '3.5-SNAPSHOT'
+    id 'com.gradleup.shadow' version '9.4.3' apply false
+}
+
+architectury {
+    minecraft = project.minecraft_version
+}
+
+allprojects {
+    group = rootProject.maven_group
+    version = rootProject.mod_version
+}
+
+subprojects {
+    apply plugin: 'dev.architectury.loom'
+    apply plugin: 'architectury-plugin'
+    apply plugin: 'maven-publish'
+
+    base {
+        // Set up a suffixed format for the mod jar names, e.g. `example-fabric`.
+        archivesName = "$rootProject.archives_name-$project.name"
+    }
+
+    repositories {
+        mavenLocal()
+        // Add repositories to retrieve artifacts from in here.
+        // You should only use this when depending on other mods because
+        // Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
+        // See https://docs.gradle.org/current/userguide/declaring_repositories.html
+        // for more information about repositories.
+        maven {
+            name = 'Shedaniel'
+            url = 'https://maven.shedaniel.me/'
+        }
+        maven {
+            name = 'Terraformers'
+            url = 'https://maven.terraformersmc.com/'
+        }
+        maven {
+            name = 'Impact Development'
+            url = 'https://maven.impactdev.net/repository/development/'
+        }
+    }
+
+    loom {
+        silentMojangMappingsLicense()
+    }
+
+    dependencies {
+        minecraft "net.minecraft:minecraft:$rootProject.minecraft_version"
+        mappings loom.officialMojangMappings()
+    }
+
+    java {
+        // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
+        // if it is present.
+        // If you remove this line, sources will not be generated.
+        withSourcesJar()
+
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        it.options.release = 21
+    }
+
+    // Configure Maven publishing.
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                artifactId = base.archivesName.get()
+                from components.java
+            }
+        }
+
+        // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
+        repositories {
+            // Add repositories to publish to here.
+            // Notice: This block does NOT have the same function as the block in the top level.
+            // The repositories here will be used for publishing your artifact, not for
+            // retrieving dependencies.
+        }
+    }
+}
+
+tasks.register('verifyRelease') {
+    group = 'verification'
+    description = 'Runs all checks, builds both loader JARs and verifies release metadata.'
+    dependsOn ':common:check', ':fabric:assemble', ':neoforge:assemble'
+
+    doLast {
+        def fabricMetadata = file('fabric/src/main/resources/fabric.mod.json').getText('UTF-8')
+        def neoForgeMetadata = file('neoforge/src/main/resources/META-INF/neoforge.mods.toml').getText('UTF-8')
+        if (!fabricMetadata.contains('"minecraft": "=1.21.1"')) {
+            throw new GradleException('Fabric metadata must target exactly Minecraft 1.21.1')
+        }
+        if (!neoForgeMetadata.contains('versionRange = "[1.21.1]"')) {
+            throw new GradleException('NeoForge metadata must target exactly Minecraft 1.21.1')
+        }
+        if (!file('LICENSE').isFile() || !file('CHANGELOG.md').isFile()) {
+            throw new GradleException('Official releases require LICENSE and CHANGELOG.md')
+        }
+        [
+                file("fabric/build/libs/${archives_name}-fabric-${version}.jar"),
+                file("neoforge/build/libs/${archives_name}-neoforge-${version}.jar")
+        ].each { artifact ->
+            if (!artifact.isFile() || artifact.length() == 0L) {
+                throw new GradleException("Missing release artifact: ${artifact}")
+            }
+        }
+    }
+}
+
+def allVersionsReleaseDir = layout.buildDirectory.dir('releases/latest')
+def isWindowsHost = System.getProperty('os.name').toLowerCase().contains('windows')
+
+def resolveJdkHome = { int major, String propertyName, String environmentName ->
+    def configuredHome = findProperty(propertyName) ?: System.getenv(environmentName)
+    def candidates = []
+
+    if (configuredHome) {
+        candidates << file(configuredHome)
+    } else {
+        def searchRoots = isWindowsHost
+                ? [file('C:/Program Files/Eclipse Adoptium'), file('C:/Program Files/Java')]
+                : [file('/usr/lib/jvm'), file('/Library/Java/JavaVirtualMachines')]
+
+        searchRoots.findAll { it.isDirectory() }.each { root ->
+            (root.listFiles() ?: []).findAll { candidate ->
+                candidate.isDirectory() && (candidate.name == "jdk-${major}" || candidate.name.startsWith("jdk-${major}."))
+            }.each { candidates << it }
+        }
+    }
+
+    def javaExecutable = isWindowsHost ? 'bin/java.exe' : 'bin/java'
+    def javaHome = candidates.find { new File(it, javaExecutable).isFile() }
+    if (javaHome == null) {
+        throw new GradleException("JDK ${major} introuvable. Configure -P${propertyName}=<chemin-vers-le-JDK-${major}>.")
+    }
+    javaHome
+}
+
+def configureVersionBuild = { Exec task, File projectDir, List<String> arguments, int javaMajor, String propertyName, String environmentName ->
+    task.doFirst {
+        def javaHome = resolveJdkHome(javaMajor, propertyName, environmentName)
+        def wrapper = new File(projectDir, isWindowsHost ? 'gradlew.bat' : 'gradlew')
+        if (!wrapper.isFile()) {
+            throw new GradleException("Gradle wrapper introuvable: ${wrapper}")
+        }
+
+        task.workingDir(projectDir)
+        task.environment('JAVA_HOME', javaHome.absolutePath)
+        if (isWindowsHost) {
+            task.commandLine('cmd', '/c', 'call', wrapper.absolutePath)
+        } else {
+            task.commandLine(wrapper.absolutePath)
+        }
+        task.args("-Dorg.gradle.java.home=${javaHome.absolutePath}")
+        task.args(arguments)
+    }
+}
+
+def buildVersion1211 = tasks.register('buildVersion1211', Exec) {
+    group = 'build'
+    description = 'Builds the Minecraft 1.21.1 Fabric and NeoForge artifacts.'
+    configureVersionBuild(delegate, rootDir,
+            [':fabric:build', ':neoforge:build', '--no-parallel', '--no-daemon', '--console=plain'],
+            21, 'java21_home', 'JAVA_21_HOME')
+}
+
+def buildVersion262 = tasks.register('buildVersion262', Exec) {
+    group = 'build'
+    description = 'Builds the Minecraft 26.2 Fabric and NeoForge artifacts.'
+    dependsOn(buildVersion1211)
+    configureVersionBuild(delegate, rootDir,
+            ['-p', 'versions/26.2', ':fabric:build', ':neoforge:build', '--no-parallel', '--no-daemon', '--console=plain'],
+            25, 'java25_home', 'JAVA_25_HOME')
+}
+
+def buildVersion263 = tasks.register('buildVersion263', Exec) {
+    group = 'build'
+    description = 'Builds the Minecraft 26.3 Fabric and NeoForge artifacts.'
+    dependsOn(buildVersion262)
+    configureVersionBuild(delegate, file('versions/26.3'),
+            [':fabric:build', ':neoforge:build', '--no-parallel', '--no-daemon', '--console=plain'],
+            25, 'java25_home', 'JAVA_25_HOME')
+}
+
+tasks.register('buildAllVersions') {
+    group = 'build'
+    description = 'Builds every supported Minecraft version and stages the latest loader JARs in build/releases/latest.'
+    dependsOn(buildVersion263)
+
+    doLast {
+        def releaseDir = allVersionsReleaseDir.get().asFile
+        delete(releaseDir)
+        releaseDir.mkdirs()
+
+        def modVersion = providers.gradleProperty('mod_version').get()
+        def artifacts = [
+                [file("fabric/build/libs/${archives_name}-fabric-${modVersion}.jar"), "${archives_name}-fabric-mc1.21.1-${modVersion}.jar"],
+                [file("neoforge/build/libs/${archives_name}-neoforge-${modVersion}.jar"), "${archives_name}-neoforge-mc1.21.1-${modVersion}.jar"],
+                [file("versions/26.2/fabric/build/libs/${archives_name}-fabric-${modVersion}.jar"), "${archives_name}-fabric-mc26.2-${modVersion}.jar"],
+                [file("versions/26.2/neoforge/build/libs/${archives_name}-neoforge-${modVersion}.jar"), "${archives_name}-neoforge-mc26.2-${modVersion}.jar"],
+                [file("versions/26.3/fabric/build/libs/${archives_name}-fabric-${modVersion}.jar"), "${archives_name}-fabric-mc26.3-${modVersion}.jar"],
+                [file("versions/26.3/neoforge/build/libs/${archives_name}-neoforge-${modVersion}.jar"), "${archives_name}-neoforge-mc26.3-${modVersion}.jar"]
+        ]
+
+        artifacts.each { artifact, outputName ->
+            if (!artifact.isFile() || artifact.length() == 0L) {
+                throw new GradleException("Missing release artifact: ${artifact}")
+            }
+            copy {
+                from artifact
+                into releaseDir
+                rename { outputName }
+            }
+        }
+
+        logger.lifecycle("Staged ${artifacts.size()} latest artifacts in ${releaseDir}")
+    }
+}

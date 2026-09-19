@@ -1,0 +1,22 @@
+architectury {
+    common rootProject.enabled_platforms.split(',')
+}
+
+dependencies {
+    // Used only for cross-loader environment annotations if needed later.
+    // InspectMC deliberately has no Architectury API runtime dependency.
+    modImplementation "net.fabricmc:fabric-loader:$rootProject.fabric_loader_version"
+    modCompileOnly "me.shedaniel.cloth:cloth-config:$rootProject.cloth_config_version"
+    modCompileOnly "com.ourstory:os-cobblemon-library-common:$rootProject.os_cobblemon_library_version"
+    modCompileOnly("com.cobblemon:mod:$rootProject.cobblemon_version") {
+        transitive = false
+    }
+    compileOnly "org.jetbrains.kotlin:kotlin-stdlib:$rootProject.kotlin_version"
+    testImplementation platform("org.junit:junit-bom:5.11.4")
+    testImplementation "org.junit.jupiter:junit-jupiter"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+}
+
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+}

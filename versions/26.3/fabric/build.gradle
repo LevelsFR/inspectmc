@@ -1,0 +1,56 @@
+plugins {
+    id 'net.fabricmc.fabric-loom' version '1.17.21'
+    id 'maven-publish'
+}
+
+repositories {
+    mavenCentral()
+    maven { url = 'https://maven.fabricmc.net/' }
+    maven { url = 'https://maven.shedaniel.me/' }
+    maven { url = 'https://maven.terraformersmc.com/' }
+}
+
+loom {
+    mods {
+        inspectmc {
+            sourceSet sourceSets.main
+        }
+    }
+}
+
+sourceSets.main.java.srcDirs = [
+        rootProject.file('../../common/src/main/java'),
+        rootProject.file('../../fabric/src/main/java'),
+        project.file('src/main/java')
+]
+sourceSets.main.resources.srcDirs = [project.file('src/main/resources')]
+sourceSets.main.java.exclude(
+        'com/levelsfr/inspectmc/cobblemon/CobblemonApiIntegration.java',
+        'com/levelsfr/inspectmc/client/config/ClothConfigUnavailableScreen.java',
+        'com/levelsfr/inspectmc/fabric/client/InspectMCFabricClient.java',
+        'com/levelsfr/inspectmc/inspection/BiomeInspector.java'
+)
+
+dependencies {
+    minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
+    implementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
+    implementation "me.shedaniel.cloth:cloth-config-fabric:${rootProject.cloth_config_version}"
+    compileOnly "com.terraformersmc:modmenu:${rootProject.modmenu_version}"
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.release = 25
+    options.encoding = 'UTF-8'
+}
+
+processResources {
+    inputs.property 'version', project.version
+    filesMatching('fabric.mod.json') {
+        expand 'version': project.version
+    }
+}
+
+base {
+    archivesName = "${rootProject.archives_name}-fabric"
+}
