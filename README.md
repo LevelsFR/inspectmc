@@ -2,6 +2,8 @@
 
 InspectMC is an in-game development and inspection toolkit for Minecraft modpack creators, datapack authors and mod developers.
 
+**Documentation:** https://levelsfr.github.io/inspectmc/
+
 ## Target
 
 - Public 1.0.0 release: Minecraft 1.21.1 only (strict version check)

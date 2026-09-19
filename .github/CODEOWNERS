@@ -1,0 +1,20 @@
+# InspectMC repository ownership
+# CODEOWNERS becomes enforceable when the main branch requires code-owner review.
+
+* @LevelsFR
+
+# Core mod source
+/common/ @LevelsFR
+/fabric/ @LevelsFR
+/neoforge/ @LevelsFR
+/versions/ @LevelsFR
+/build.gradle @LevelsFR
+/settings.gradle @LevelsFR
+/gradle.properties @LevelsFR
+
+# Documentation, automation and release metadata
+/site/ @LevelsFR
+/.github/ @LevelsFR
+/README.md @LevelsFR
+/CHANGELOG.md @LevelsFR
+/LICENSE @LevelsFR

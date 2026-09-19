@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="InspectMC documentation for Minecraft 1.21.1 on Fabric and NeoForge. In-game inspection, diagnostics, exports, runtime tools and optional Cobblemon support.">
+  <title>InspectMC Documentation</title>
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <button class="menu-button" id="menuButton" type="button" aria-label="Open navigation">☰</button>
+
+    <a class="brand" href="#overview" data-tab-link="overview">
+      <span class="brand-mark">IMC</span>
+      <span class="brand-copy">
+        <strong>InspectMC</strong>
+        <small>v1 Documentation</small>
+      </span>
+    </a>
+
+    <div class="search-wrap">
+      <span class="search-icon" aria-hidden="true"></span>
+      <input id="wikiSearch" type="search" placeholder="Search the documentation..." autocomplete="off">
+      <kbd>Ctrl K</kbd>
+      <div class="search-results" id="searchResults" hidden></div>
+    </div>
+
+    <a class="community-badge bisecthosting-badge" href="https://www.bisecthosting.com/OurStory" target="_blank" rel="noopener noreferrer sponsored" aria-label="Save 25% on BisectHosting servers with code OurStory">
+      <span class="community-icon bisecthosting-icon" aria-hidden="true">BH</span>
+      <span class="community-copy">
+        <strong>25% OFF Servers</strong>
+        <small>BisectHosting <span class="community-divider">•</span> Code <b>OurStory</b></small>
+      </span>
+    </a>
+
+    <a class="community-badge discord-badge" id="discordBadge" href="https://discord.gg/kb8NSTF45n" target="_blank" rel="noopener noreferrer" aria-label="Join the Our Story Network Discord">
+      <svg class="community-icon discord-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path fill="currentColor" d="M19.54 5.34A16.3 16.3 0 0 0 15.44 4l-.5 1.02a15.1 15.1 0 0 0-5.86 0L8.56 4a16.5 16.5 0 0 0-4.1 1.35C1.87 9.2 1.17 12.96 1.52 16.67a16.7 16.7 0 0 0 5.03 2.55l1.23-1.68c-.67-.25-1.3-.56-1.9-.93l.46-.36c3.67 1.69 7.65 1.69 11.28 0l.47.36c-.6.37-1.24.69-1.9.94l1.22 1.67a16.6 16.6 0 0 0 5.04-2.55c.42-4.3-.72-8.03-2.91-11.33ZM8.5 14.44c-1.1 0-2-1.01-2-2.25s.88-2.26 2-2.26c1.12 0 2.02 1.02 2 2.26 0 1.24-.88 2.25-2 2.25Zm7 0c-1.1 0-2-1.01-2-2.25s.88-2.26 2-2.26c1.12 0 2.02 1.02 2 2.26 0 1.24-.88 2.25-2 2.25Z"/>
+      </svg>
+      <span class="community-copy">
+        <strong>Discord</strong>
+        <small id="discordStats"><span class="status-dot"></span>Join the server</small>
+      </span>
+    </a>
+
+    <a class="community-badge github-badge" href="https://github.com/LevelsFR/inspectmc" target="_blank" rel="noopener noreferrer" aria-label="View InspectMC on GitHub">
+      <span class="community-icon github-icon" aria-hidden="true">GH</span>
+      <span class="community-copy">
+        <strong>GitHub</strong>
+        <small>Source & releases</small>
+      </span>
+    </a>
+
+    <a class="community-badge license-badge" href="https://github.com/LevelsFR/inspectmc/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" aria-label="InspectMC MIT license">
+      <span class="community-icon license-icon" aria-hidden="true">MIT</span>
+      <span class="community-copy">
+        <strong>MIT License</strong>
+        <small>Open source</small>
+      </span>
+    </a>
+
+    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle theme">
+      <span class="theme-icon theme-icon-sun">☀</span>
+      <span class="theme-icon theme-icon-moon">☾</span>
+    </button>
+  </header>
+
+  <div class="layout">
+    <aside id="sidebar">
+      <div class="sidebar-title">Documentation</div>
+      <nav class="sidebar-navigation" aria-label="Documentation sections">
+        <a href="#overview" data-tab-link="overview" class="active">👋 Overview</a>
+        <a href="#installation" data-tab-link="installation">📦 Installation</a>
+        <a href="#commands" data-tab-link="commands">⌨️ Commands</a>
+        <a href="#configuration" data-tab-link="configuration">⚙️ Configuration</a>
+        <a href="#exports" data-tab-link="exports">📊 Exports</a>
+        <a href="#cobblemon" data-tab-link="cobblemon">🔴 Cobblemon</a>
+        <a href="#troubleshooting" data-tab-link="troubleshooting">🛠️ Troubleshooting</a>
+      </nav>
+
+      <div class="sidebar-section">
+        <div class="sidebar-title">Links</div>
+        <a class="sidebar-link" href="https://www.bisecthosting.com/OurStory" target="_blank" rel="noopener noreferrer sponsored">🤝 BisectHosting Partner</a>
+        <a class="sidebar-link" href="https://discord.gg/kb8NSTF45n" target="_blank" rel="noopener noreferrer">💬 Discord</a>
+        <a class="sidebar-link" href="https://github.com/LevelsFR/inspectmc" target="_blank" rel="noopener noreferrer">💻 GitHub</a>
+        <a class="sidebar-link" href="https://github.com/LevelsFR/inspectmc/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer">📝 Changelog</a>
+        <a class="sidebar-link" href="https://www.patreon.com/c/OurStoryCollection" target="_blank" rel="noopener noreferrer">❤️ Patreon</a>
+      </div>
+
+      <div class="sidebar-footer">
+        <strong>InspectMC</strong>
+        <span>Documentation for v1.0</span>
+      </div>
+    </aside>
+
+    <main>
+      <div class="tabs" role="tablist" aria-label="Documentation tabs">
+        <button class="tab active" type="button" data-tab="overview">Overview</button>
+        <button class="tab" type="button" data-tab="installation">Installation</button>
+        <button class="tab" type="button" data-tab="commands">Commands</button>
+        <button class="tab" type="button" data-tab="configuration">Configuration</button>
+        <button class="tab" type="button" data-tab="exports">Exports</button>
+        <button class="tab" type="button" data-tab="cobblemon">Cobblemon</button>
+        <button class="tab" type="button" data-tab="troubleshooting">Troubleshooting</button>
+      </div>
+
+      <article>
+        <section class="tab-panel active" id="overview" data-panel="overview">
+          <div class="page-heading">
+            <span class="page-kicker">InspectMC v1</span>
+            <h1>InspectMC</h1>
+            <p class="page-description">
+              A modern in-game inspection and diagnostic toolkit for Minecraft modpack creators, datapack authors and mod developers.
+            </p>
+          </div>
+
+          <div class="hint hint-info">
+            <strong>Public v1 target</strong>
+            <p>InspectMC 1.0.0 targets Minecraft 1.21.1, Java 21, Fabric and NeoForge. The 26.2 and 26.3 trees in the repository are experimental forward-port work and are not part of the public 1.0.0 release.</p>
+          </div>
+
+          <h2>What does InspectMC do?</h2>
+          <p>
+            InspectMC exposes useful game, registry, world and datapack information directly in-game. It is designed to reduce the time spent jumping between logs, commands, source files and external utilities while building or debugging a modpack.
+          </p>
+
+          <h2>Main toolsets</h2>
+          <ul>
+            <li>Inspect held items, blocks, block entities, entities, players and biomes.</li>
+            <li>Search runtime registries by partial ID or namespace.</li>
+            <li>Locate nearby blocks, entities and block entities.</li>
+            <li>Inspect loaded chunks, dimensions, entity types and block entities.</li>
+            <li>Collect block and biome statistics around the player.</li>
+            <li>List mods, datapacks, namespaces and runtime registries.</li>
+            <li>Export registries, tags, recipes, biomes and complete diagnostic reports.</li>
+            <li>Optionally audit Cobblemon spawn data and expose Cobblemon-specific diagnostics.</li>
+          </ul>
+
+          <h2>Interactive chat output</h2>
+          <ul>
+            <li>Click useful IDs and values to copy them.</li>
+            <li>Hover registry IDs for registry and namespace context.</li>
+            <li>Use <code>[TP]</code> actions to prefill teleport commands for returned positions.</li>
+            <li>Use clickable previous and next actions for long result lists.</li>
+            <li>Keep raw entity NBT out of chat while retaining a dedicated <code>[Copy NBT]</code> action.</li>
+            <li>Open local dump files and folders directly when the client has access to the generated path.</li>
+          </ul>
+
+          <h2>Permissions</h2>
+          <p>
+            Safe local inspection such as the held item, current biome, self inspection and registry search is available to regular players. World searches, other-player inspection, sensitive NBT, loaded-state diagnostics, pack information, statistics and exports require the configured vanilla permission level.
+          </p>
+        </section>
+
+        <section class="tab-panel" id="installation" data-panel="installation">
+          <div class="page-heading">
+            <span class="page-kicker">Getting started</span>
+            <h1>Installation</h1>
+            <p class="page-description">Use the loader build that matches your Minecraft 1.21.1 installation.</p>
+          </div>
+
+          <h2>Requirements</h2>
+          <table>
+            <thead><tr><th>Component</th><th>Requirement</th></tr></thead>
+            <tbody>
+              <tr><td>Minecraft</td><td>1.21.1</td></tr>
+              <tr><td>Java</td><td>21 or newer compatible Java 21 runtime</td></tr>
+              <tr><td>Fabric</td><td>Fabric Loader 0.19.3+ and Fabric API</td></tr>
+              <tr><td>NeoForge</td><td>NeoForge 21.1+</td></tr>
+            </tbody>
+          </table>
+
+          <h2>Install the mod</h2>
+          <ol>
+            <li>Download the regular InspectMC JAR for your loader.</li>
+            <li>Place it in the relevant <code>mods</code> folder.</li>
+            <li>Start the game or dedicated server.</li>
+            <li>Run <code>/inspectmc hand</code> or <code>/inspectmc inspect biome</code> as a first test.</li>
+          </ol>
+
+          <div class="hint hint-warning">
+            <strong>Use the normal release JAR</strong>
+            <p>Files containing <code>sources</code> or <code>dev-shadow</code> are development artifacts and are not the normal runtime build.</p>
+          </div>
+
+          <h2>Optional client configuration UI</h2>
+          <p>
+            Cloth Config is optional. When present, InspectMC exposes the same settings through <code>/inspectmc-config</code>, Mod Menu on Fabric, or the NeoForge mod configuration button.
+          </p>
+          <p>
+            On a dedicated server, the client-side screen cannot edit the remote server filesystem. The server administrator must edit the server's <code>config/inspectmc.json</code>.
+          </p>
+
+          <h2>Optional Cobblemon integration</h2>
+          <p>
+            Cobblemon is not required. Additional runtime diagnostics become available when Cobblemon 1.8.1 to 1.8.x and OS Cobblemon Library 1.1.x are both installed.
+          </p>
+        </section>
+
+        <section class="tab-panel" id="commands" data-panel="commands">
+          <div class="page-heading">
+            <span class="page-kicker">In-game toolkit</span>
+            <h1>Commands</h1>
+            <p class="page-description">InspectMC groups inspection, search, runtime diagnostics, world queries and exports under <code>/inspectmc</code>.</p>
+          </div>
+
+          <h2>Item and world inspection</h2>
+          <div class="command"><code>/inspectmc hand</code><p>Compact main-hand summary. Use <code>/inspectmc hand full</code> for tags, components and additional copy actions.</p></div>
+          <div class="command"><code>/inspectmc inspect held [details]</code><p>Inspect the held item. The optional detailed view exposes additional technical data.</p></div>
+          <div class="command"><code>/inspectmc inspect block [distance|target [distance]|id &lt;block_id&gt; [distance]]</code><p>Inspect the block you are looking at or target a specific block ID.</p></div>
+          <div class="command"><code>/inspectmc inspect blockentity [distance]</code><p>Inspect a targeted block entity, including inventory and copyable NBT where available.</p></div>
+          <div class="command"><code>/inspectmc inspect entity [distance|look [distance]|target &lt;selector&gt;|id &lt;entity_type&gt; [distance]]</code><p>Inspect a targeted entity or select one through a selector or entity type.</p></div>
+          <div class="command"><code>/inspectmc inspect biome [details]</code><p>Inspect the current biome. <code>details</code> adds ambient, spawn and world-generation information.</p></div>
+          <div class="command"><code>/inspectmc inspect player [player]</code><p>Inspect yourself or, with the required permission, another player.</p></div>
+
+          <h2>Registry search and locate</h2>
+          <div class="command"><code>/inspectmc search &lt;name or namespace&gt;</code><p>Search partial IDs across items, blocks, block entities, fluids, particles, sounds, entity types and runtime biomes.</p></div>
+          <div class="command"><code>/inspectmc search page &lt;page&gt; &lt;name or namespace&gt;</code><p>Open a specific result page for a registry search.</p></div>
+          <div class="command"><code>/inspectmc locate block &lt;block_id&gt; [radius]</code><p>Locate nearby blocks of a specific ID.</p></div>
+          <div class="command"><code>/inspectmc locate entity &lt;entity_type&gt; [radius] [limit]</code><p>Locate nearby entities and return the nearest matching positions.</p></div>
+          <div class="command"><code>/inspectmc locate blockentity &lt;block_entity_type&gt; [radius] [limit]</code><p>Locate nearby block entities and return compact position and chunk information.</p></div>
+
+          <h2>Loaded state and statistics</h2>
+          <div class="command"><code>/inspectmc loaded chunks [map_radius_chunks]</code><p>Display loaded chunk information with a compact chunk map.</p></div>
+          <div class="command"><code>/inspectmc loaded entities [page]</code><p>List loaded entity types with pagination.</p></div>
+          <div class="command"><code>/inspectmc loaded blockentities</code><p>Summarize loaded block entities.</p></div>
+          <div class="command"><code>/inspectmc loaded dimensions</code><p>Summarize loaded dimensions, players, entities and forced chunks.</p></div>
+          <div class="command"><code>/inspectmc stats blocks [radius]</code><p>Collect block statistics around the executing player.</p></div>
+          <div class="command"><code>/inspectmc stats biomes [radius] [step]</code><p>Sample biome distribution around the executing player.</p></div>
+
+          <h2>Pack information</h2>
+          <div class="command"><code>/inspectmc pack &lt;mods|datapacks|namespaces|registries&gt; [page]</code><p>Browse loaded mods, active datapacks, namespaces or runtime registries.</p></div>
+
+          <h2>Exports</h2>
+          <div class="command"><code>/inspectmc dump biomes [excel|csv|json]</code><p>Export biome and biome-tag data. Excel is the default.</p></div>
+          <div class="command"><code>/inspectmc dump registries [json|csv|excel]</code><p>Export all runtime registries.</p></div>
+          <div class="command"><code>/inspectmc dump registry &lt;registry_id&gt; [json|csv|excel]</code><p>Export one registry.</p></div>
+          <div class="command"><code>/inspectmc dump tags &lt;registry_id&gt; [json|csv|excel]</code><p>Export tags for one registry.</p></div>
+          <div class="command"><code>/inspectmc dump recipes [json|csv|excel]</code><p>Export normalized recipe information.</p></div>
+          <div class="command"><code>/inspectmc dump spawns [json|csv|excel]</code><p>Export the optional Cobblemon spawn audit.</p></div>
+          <div class="command"><code>/inspectmc dump report</code><p>Create the complete ZIP diagnostic report.</p></div>
+        </section>
+
+        <section class="tab-panel" id="configuration" data-panel="configuration">
+          <div class="page-heading">
+            <span class="page-kicker">Server-local settings</span>
+            <h1>Configuration</h1>
+            <p class="page-description">InspectMC stores its server-local configuration in <code>config/inspectmc.json</code>.</p>
+          </div>
+
+          <p>
+            The file is created when a configuration-aware command is first used. Changes are read when the server starts. Values outside their documented bounds fall back to defaults.
+          </p>
+
+          <table>
+            <thead><tr><th>Option</th><th>Default</th><th>Purpose</th></tr></thead>
+            <tbody>
+              <tr><td><code>operatorPermissionLevel</code></td><td>2</td><td>Vanilla permission level required for world, runtime and export diagnostics.</td></tr>
+              <tr><td><code>defaultBlockDistance</code></td><td>20</td><td>Default block and block-entity inspection distance.</td></tr>
+              <tr><td><code>defaultEntityDistance</code></td><td>20</td><td>Default entity inspection distance.</td></tr>
+              <tr><td><code>defaultLocateResults</code></td><td>8</td><td>Exact positions shown by locate commands when no limit is supplied.</td></tr>
+              <tr><td><code>searchPageSize</code></td><td>30</td><td>Registry search results shown per page.</td></tr>
+              <tr><td><code>listPageSize</code></td><td>50</td><td>Mods, datapacks, namespaces and runtime registries shown per page.</td></tr>
+              <tr><td><code>loadedEntityPageSize</code></td><td>25</td><td>Loaded entity types shown per page.</td></tr>
+              <tr><td><code>maxDumpArchives</code></td><td>0</td><td>Maximum timestamped archives retained per export. Zero keeps all archives.</td></tr>
+            </tbody>
+          </table>
+
+          <div class="hint hint-info">
+            <strong>Dedicated servers</strong>
+            <p>The client configuration screen cannot write to a remote dedicated server. Edit that server's own <code>config/inspectmc.json</code> and restart the server.</p>
+          </div>
+
+          <h2>Permission model</h2>
+          <p>
+            The configured operator level is used for world searches, another player's data, loaded-state diagnostics, statistics, pack information and dumps. Lower-risk local queries remain available without operator privileges.
+          </p>
+        </section>
+
+        <section class="tab-panel" id="exports" data-panel="exports">
+          <div class="page-heading">
+            <span class="page-kicker">Diagnostics & automation</span>
+            <h1>Exports</h1>
+            <p class="page-description">Generate human-readable workbooks and stable machine-readable files from the live game state.</p>
+          </div>
+
+          <h2>Output directory</h2>
+          <pre><code>inspectmc/dumps</code></pre>
+          <p>
+            Dumps are written relative to the game or server working directory. Every export keeps a timestamped archive and atomically updates a stable <code>*-latest.*</code> alias for scripts and bots.
+          </p>
+
+          <h2>Excel</h2>
+          <p>
+            <code>/inspectmc dump biomes</code> defaults to a real <code>.xlsx</code> workbook. It opens on an explanatory Overview sheet, followed by a filterable Biomes summary and a normalized Biome Tags sheet with one biome/tag relationship per row.
+          </p>
+
+          <h2>CSV</h2>
+          <p>
+            CSV is the stable RFC 4180 machine format for integrations that prefer flat files.
+          </p>
+
+          <h2>JSON</h2>
+          <p>
+            JSON exports use schema version 2, UTC timestamps and common Minecraft, InspectMC and loader metadata. IDs, tags, relations and recipes are sorted deterministically.
+          </p>
+
+          <h2>Complete report</h2>
+          <p><code>/inspectmc dump report</code> creates a ZIP containing:</p>
+          <ul>
+            <li><code>manifest.json</code></li>
+            <li>a complete <code>report.xlsx</code></li>
+            <li>normalized CSV files for mods, registries, entries, tags, biomes and recipes</li>
+            <li>detailed recipe JSON</li>
+            <li>active datapacks, loaded dimensions, forced-chunk counts and per-dimension entity summaries</li>
+          </ul>
+
+          <div class="hint hint-success">
+            <strong>Local convenience actions</strong>
+            <p>When the generated file exists on the local machine, chat output can expose <code>[Open file]</code> and <code>[Open folder]</code> actions in addition to copying the path.</p>
+          </div>
+        </section>
+
+        <section class="tab-panel" id="cobblemon" data-panel="cobblemon">
+          <div class="page-heading">
+            <span class="page-kicker">Optional integration</span>
+            <h1>Cobblemon</h1>
+            <p class="page-description">InspectMC can audit loaded Cobblemon spawn resources and expose deeper runtime diagnostics without making Cobblemon a required dependency.</p>
+          </div>
+
+          <h2>Spawn audit</h2>
+          <div class="command"><code>/inspectmc spawn validate</code><p>Check malformed entries, duplicate spawn IDs, missing presets and unresolved biome, dimension or block references.</p></div>
+          <div class="command"><code>/inspectmc spawn here [page]</code><p>Browse compatible and potentially compatible spawn entries for the current location.</p></div>
+          <div class="command"><code>/inspectmc spawn explain &lt;pokemon&gt; [page]</code><p>Evaluate biome, dimension, height, light, sky visibility, weather and moon-phase conditions at the current position.</p></div>
+
+          <div class="hint hint-warning">
+            <strong>Validation warnings are not always errors</strong>
+            <p>Another loaded datapack or optional mod can intentionally provide a reference. InspectMC therefore keeps unresolved optional relationships as warnings where appropriate.</p>
+          </div>
+
+          <h2>Runtime API diagnostics</h2>
+          <p>
+            When Cobblemon 1.8.1 to 1.8.x and OS Cobblemon Library 1.1.x are both available, InspectMC enables an additional read-only runtime integration.
+          </p>
+          <div class="command"><code>/inspectmc cobblemon status</code><p>Report whether the optional integration is available.</p></div>
+          <div class="command"><code>/inspectmc cobblemon entity [look [distance]|target &lt;selector&gt;]</code><p>Inspect Pokémon identity, form, shiny/Alpha state, aspects, labels, marks, types, ability category, size, owner, battle state and IV diagnostics.</p></div>
+          <div class="command"><code>/inspectmc cobblemon player [player]</code><p>Summarize Party, PC and Pokédex progress.</p></div>
+          <div class="command"><code>/inspectmc cobblemon find &lt;property_query&gt;</code><p>Search your owned Pokémon using native Cobblemon property syntax.</p></div>
+          <div class="command"><code>/inspectmc cobblemon find player &lt;player&gt; &lt;property_query&gt;</code><p>Operator form for searching another player's owned Pokémon.</p></div>
+
+          <h2>Spawn exports</h2>
+          <p>
+            <code>/inspectmc dump spawns</code> defaults to an Excel audit containing Overview, Problems, Spawn Entries, Conditions, Presets, Buckets, Dependencies and Source Packs sheets. CSV gives one stable row per spawn entry, while JSON preserves normalized metadata and original loaded definitions.
+          </p>
+        </section>
+
+        <section class="tab-panel" id="troubleshooting" data-panel="troubleshooting">
+          <div class="page-heading">
+            <span class="page-kicker">Common checks</span>
+            <h1>Troubleshooting</h1>
+            <p class="page-description">Start with the command, permission level and runtime location before digging into logs.</p>
+          </div>
+
+          <h2>A command is denied</h2>
+          <p>
+            Check <code>operatorPermissionLevel</code> in <code>config/inspectmc.json</code>. World searches, loaded-state diagnostics, another player's data, statistics, pack information and dumps are intentionally permission-gated.
+          </p>
+
+          <h2>I cannot open a generated file</h2>
+          <p>
+            The file is created on the machine running the game or server. On a remote dedicated server, the local client cannot directly open a path that only exists on the server host. Copy the path or retrieve the file from the server filesystem.
+          </p>
+
+          <h2>Cobblemon commands are unavailable</h2>
+          <p>
+            Base InspectMC features do not require Cobblemon. The deeper runtime integration requires both Cobblemon 1.8.1 to 1.8.x and OS Cobblemon Library 1.1.x. Run <code>/inspectmc cobblemon status</code> to inspect availability.
+          </p>
+
+          <h2>Spawn data looks stale</h2>
+          <p>
+            InspectMC reads the datapack resources currently loaded by the server. After changing datapacks, run <code>/reload</code> before validating or explaining spawn data.
+          </p>
+
+          <h2>Can I use the 26.2 or 26.3 code?</h2>
+          <p>
+            Those directories are experimental forward-port work in the repository. The public 1.0.0 release target documented here is Minecraft 1.21.1.
+          </p>
+
+          <h2>Bug reports</h2>
+          <p>
+            For export or runtime issues, include the exact InspectMC version, loader, Minecraft version, command used and relevant logs. A complete <code>/inspectmc dump report</code> can be useful when the problem concerns registries, recipes, packs or world state.
+          </p>
+        </section>
+      </article>
+    </main>
+  </div>
+</body>
+</html>
