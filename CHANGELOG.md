@@ -2,10 +2,11 @@
 
 ## 1.0.0
 
-Initial public release for Minecraft 1.21.1 on Fabric and NeoForge.
+Initial public release for Minecraft 1.21.1, 26.2 and 26.3 on Fabric and NeoForge.
 
 ### New
 
+- Add dedicated release builds for Minecraft 1.21.1, 26.2 and 26.3 on both Fabric and NeoForge.
 - Add `/inspectmc hand` compact summary and `/inspectmc hand full` with clickable item IDs, item tags, data components and block tags for the held item.
 - Add server-local configuration for permission level, inspection defaults, pagination and dump archive retention.
 - Add an optional Cloth Config screen for editing the server-local settings in an integrated world.
