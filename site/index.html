@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="InspectMC documentation for Minecraft 1.21.1 on Fabric and NeoForge. In-game inspection, diagnostics, exports, runtime tools and optional Cobblemon support.">
+  <meta name="description" content="InspectMC documentation for Minecraft 1.21.1, 26.2 and 26.3 on Fabric and NeoForge. In-game inspection, diagnostics, exports, runtime tools and optional Cobblemon support.">
   <title>InspectMC Documentation</title>
   <link rel="stylesheet" href="styles.css">
   <script defer src="app.js"></script>
@@ -117,8 +117,8 @@
           </div>
 
           <div class="hint hint-info">
-            <strong>Public v1 target</strong>
-            <p>InspectMC 1.0.0 targets Minecraft 1.21.1, Java 21, Fabric and NeoForge. The 26.2 and 26.3 trees in the repository are experimental forward-port work and are not part of the public 1.0.0 release.</p>
+            <strong>Supported v1 releases</strong>
+            <p>InspectMC 1.0.0 is released for Minecraft 1.21.1, 26.2 and 26.3 on both Fabric and NeoForge. Minecraft 1.21.1 uses Java 21, while 26.2 and 26.3 use Java 25.</p>
           </div>
 
           <h2>What does InspectMC do?</h2>
@@ -158,17 +158,17 @@
           <div class="page-heading">
             <span class="page-kicker">Getting started</span>
             <h1>Installation</h1>
-            <p class="page-description">Use the loader build that matches your Minecraft 1.21.1 installation.</p>
+            <p class="page-description">Use the InspectMC build that matches both your Minecraft version and mod loader.</p>
           </div>
 
           <h2>Requirements</h2>
           <table>
             <thead><tr><th>Component</th><th>Requirement</th></tr></thead>
             <tbody>
-              <tr><td>Minecraft</td><td>1.21.1</td></tr>
-              <tr><td>Java</td><td>21 or newer compatible Java 21 runtime</td></tr>
-              <tr><td>Fabric</td><td>Fabric Loader 0.19.3+ and Fabric API</td></tr>
-              <tr><td>NeoForge</td><td>NeoForge 21.1+</td></tr>
+              <tr><td>Minecraft</td><td>1.21.1, 26.2 or 26.3</td></tr>
+              <tr><td>Java</td><td>Java 21 for Minecraft 1.21.1; Java 25 for Minecraft 26.2 and 26.3</td></tr>
+              <tr><td>Fabric</td><td>Supported on all three Minecraft versions with the matching Fabric build and Fabric API</td></tr>
+              <tr><td>NeoForge</td><td>Supported on all three Minecraft versions with the matching NeoForge build</td></tr>
             </tbody>
           </table>
 
@@ -195,7 +195,7 @@
 
           <h2>Optional Cobblemon integration</h2>
           <p>
-            Cobblemon is not required. Additional runtime diagnostics become available when Cobblemon 1.8.1 to 1.8.x and OS Cobblemon Library 1.1.x are both installed.
+            Cobblemon is not required. On Minecraft 1.21.1, additional runtime diagnostics become available when Cobblemon 1.8.1 to 1.8.x and OS Cobblemon Library 1.1.x are both installed. The 26.2 and 26.3 release builds do not include this Cobblemon 1.8.x runtime API integration.
           </p>
         </section>
 
@@ -342,7 +342,7 @@
 
           <h2>Runtime API diagnostics</h2>
           <p>
-            When Cobblemon 1.8.1 to 1.8.x and OS Cobblemon Library 1.1.x are both available, InspectMC enables an additional read-only runtime integration.
+            On Minecraft 1.21.1, when Cobblemon 1.8.1 to 1.8.x and OS Cobblemon Library 1.1.x are both available, InspectMC enables an additional read-only runtime integration.
           </p>
           <div class="command"><code>/inspectmc cobblemon status</code><p>Report whether the optional integration is available.</p></div>
           <div class="command"><code>/inspectmc cobblemon entity [look [distance]|target &lt;selector&gt;]</code><p>Inspect Pokémon identity, form, shiny/Alpha state, aspects, labels, marks, types, ability category, size, owner, battle state and IV diagnostics.</p></div>
@@ -383,9 +383,9 @@
             InspectMC reads the datapack resources currently loaded by the server. After changing datapacks, run <code>/reload</code> before validating or explaining spawn data.
           </p>
 
-          <h2>Can I use the 26.2 or 26.3 code?</h2>
+          <h2>Which Minecraft versions are supported?</h2>
           <p>
-            Those directories are experimental forward-port work in the repository. The public 1.0.0 release target documented here is Minecraft 1.21.1.
+            InspectMC 1.0.0 has dedicated Fabric and NeoForge release builds for Minecraft 1.21.1, 26.2 and 26.3. Use Java 21 for 1.21.1 and Java 25 for 26.2 or 26.3, and always download the JAR matching both your Minecraft version and loader.
           </p>
 
           <h2>Bug reports</h2>
