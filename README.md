@@ -4,14 +4,21 @@ InspectMC is an in-game development and inspection toolkit for Minecraft modpack
 
 **Documentation:** https://levelsfr.github.io/inspectmc/
 
-## Target
+## Supported versions
 
-- Public 1.0.0 release: Minecraft 1.21.1 only (strict version check)
-- Java 21
-- Fabric
-- NeoForge
+InspectMC 1.0.0 is released for:
 
-Experimental forward-port work for Minecraft 26.2 and 26.3 is kept under `versions/` for development and is not part of the public 1.0.0 release.
+| Minecraft | Java | Fabric | NeoForge |
+|---|---:|:---:|:---:|
+| 1.21.1 | 21 | Yes | Yes |
+| 26.2 | 25 | Yes | Yes |
+| 26.3 | 25 | Yes | Yes |
+
+Each Minecraft version has a dedicated Fabric and NeoForge JAR. The release build stages all six artifacts under `build/releases/latest`.
+
+The 26.2 and 26.3 ports are maintained under `versions/` and are release targets, not experimental-only trees.
+
+The optional Cobblemon runtime API integration is currently available on the Minecraft 1.21.1 build when Cobblemon 1.8.1–1.8.x and OS Cobblemon Library 1.1.x are installed. InspectMC's core inspection, diagnostics and export toolkit does not require Cobblemon.
 
 ## Commands
 
@@ -89,11 +96,13 @@ InspectMC detects Cobblemon world spawn pools through the datapack resources cur
 
 ## Optional Cobblemon API diagnostics
 
-When both Cobblemon 1.8.1–1.8.x and OS Cobblemon Library 1.1.x are installed, InspectMC enables an optional runtime integration. `/inspectmc inspect entity` automatically adds species, form, shiny/Alpha state, aspects, labels, marks, types, ability category, size, owner, battle state and IV diagnostics for a targeted Cobblemon Pokémon. The dedicated `/inspectmc cobblemon entity` command exposes the same view directly.
+On the Minecraft 1.21.1 build, when both Cobblemon 1.8.1–1.8.x and OS Cobblemon Library 1.1.x are installed, InspectMC enables an optional runtime integration. `/inspectmc inspect entity` automatically adds species, form, shiny/Alpha state, aspects, labels, marks, types, ability category, size, owner, battle state and IV diagnostics for a targeted Cobblemon Pokémon. The dedicated `/inspectmc cobblemon entity` command exposes the same view directly.
 
 `/inspectmc cobblemon player [player]` summarizes Party, PC and Pokédex progress. `/inspectmc cobblemon find <property_query>` searches the executing player's owned Pokémon with Cobblemon's native property syntax, for example `species=pikachu shiny=true`; operators can use `find player <player> <property_query>` for another player. `/inspectmc cobblemon status` reports whether the optional integration is available.
 
 The API integration is read-only and remains isolated from the base mod. InspectMC still loads and retains all non-Cobblemon features when either optional dependency is absent.
+
+The Minecraft 26.2 and 26.3 release builds do not include the Cobblemon 1.8.x runtime API integration.
 
 For source builds that compile the optional integration, publish OS Cobblemon Library 1.1.0 to Maven Local first with its `scripts/publish-local.ps1` helper. The released InspectMC JARs do not bundle Cobblemon or OS Cobblemon Library; they only declare both as optional loader suggestions/dependencies.
 
@@ -101,7 +110,10 @@ For source builds that compile the optional integration, publish OS Cobblemon Li
 
 - Changes: [CHANGELOG.md](CHANGELOG.md)
 - License: [LICENSE](LICENSE)
-- Use the regular loader JAR from `fabric/build/libs` or `neoforge/build/libs`; files containing `sources` or `dev-shadow` are development artifacts.
+- Use the JAR matching both your Minecraft version and loader.
+- `./gradlew buildAllVersions` stages the six release JARs under `build/releases/latest`.
+- Minecraft 1.21.1 uses Java 21; Minecraft 26.2 and 26.3 use Java 25.
+- Files containing `sources` or `dev-shadow` are development artifacts.
 
 ## Interactive chat output
 
