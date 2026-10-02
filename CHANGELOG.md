@@ -1,5 +1,11 @@
 # InspectMC changelog
 
+## 1.0.1
+
+### Fixes
+
+- Fixed **runtime tag exports** so biome, registry and report dumps correctly include their actual tag relationships instead of empty tag data.
+
 ## 1.0.0
 
 Initial public release for Minecraft 1.21.1 on Fabric and NeoForge.
