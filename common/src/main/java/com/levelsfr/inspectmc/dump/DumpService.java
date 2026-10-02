@@ -628,32 +628,55 @@ public final class DumpService {
 
     private static List<BiomeTagEntry> biomeTags(MinecraftServer server) {
         Registry<Biome> registry = IdentifierCompat.registry(server.registryAccess(), Registries.BIOME);
-        return registry.keySet().stream()
-                .map(IdentifierCompat::value)
-                .sorted()
-                .map(id -> new BiomeTagEntry(id, List.of()))
+        return biomeTagsFromRelations(
+                registry.keySet().stream().map(IdentifierCompat::value).sorted().toList(),
+                tagEntries(registry));
+    }
+
+    static List<BiomeTagEntry> biomeTagsFromRelations(List<String> biomeIds, List<TagEntry> entries) {
+        Map<String, java.util.Set<String>> tagsByBiome = new TreeMap<>();
+        biomeIds.forEach(id -> tagsByBiome.put(id, new java.util.TreeSet<>()));
+        for (TagEntry entry : entries) {
+            for (String value : entry.values()) {
+                java.util.Set<String> tags = tagsByBiome.get(value);
+                if (tags != null) {
+                    tags.add(entry.id());
+                }
+            }
+        }
+        return tagsByBiome.entrySet().stream()
+                .map(entry -> new BiomeTagEntry(entry.getKey(), List.copyOf(entry.getValue())))
                 .toList();
     }
 
     private static List<TagEntry> tagEntries(Registry<?> registry) {
         List<TagEntry> entries = new ArrayList<>();
-        Object tags = MinecraftCompat.call(registry, "getTags", "tags");
+        Object tags = MinecraftCompat.callNoArg(registry, "getTags", "tags");
         if (tags instanceof java.util.stream.Stream<?> stream) {
             stream.forEach(pair -> {
-                Object key = MinecraftCompat.call(pair, "getFirst", "key", "name");
-                Object valuesObject = MinecraftCompat.call(pair, "getSecond", "values", "elements");
-                List<String> values = new ArrayList<>();
+                Object key = MinecraftCompat.callNoArg(pair, "getFirst", "key", "name");
+                Object valuesObject = MinecraftCompat.callNoArg(pair, "getSecond", "values", "elements");
+                List<String> collectedValues = new ArrayList<>();
                 if (valuesObject instanceof Iterable<?> iterable) {
                     for (Object holder : iterable) {
-                        Object holderKey = MinecraftCompat.call(holder, "unwrapKey", "key");
+                        Object holderKey = MinecraftCompat.callNoArg(holder, "unwrapKey", "key");
                         if (holderKey instanceof java.util.Optional<?> optional) {
-                            optional.ifPresent(value -> values.add(IdentifierCompat.resourceKeyId(value)));
+                            optional.ifPresent(value -> collectedValues.add(IdentifierCompat.resourceKeyId(value)));
                         } else if (holderKey != null) {
-                            values.add(IdentifierCompat.resourceKeyId(holderKey));
+                            collectedValues.add(IdentifierCompat.resourceKeyId(holderKey));
                         }
                     }
+                } else if (valuesObject instanceof java.util.stream.Stream<?> valueStream) {
+                    valueStream.forEach(holder -> {
+                        Object holderKey = MinecraftCompat.callNoArg(holder, "unwrapKey", "key");
+                        if (holderKey instanceof java.util.Optional<?> optional) {
+                            optional.ifPresent(value -> collectedValues.add(IdentifierCompat.resourceKeyId(value)));
+                        } else if (holderKey != null) {
+                            collectedValues.add(IdentifierCompat.resourceKeyId(holderKey));
+                        }
+                    });
                 }
-                values.sort(String::compareTo);
+                List<String> values = collectedValues.stream().distinct().sorted().toList();
                 if (key != null) entries.add(new TagEntry(IdentifierCompat.resourceKeyId(key), List.copyOf(values)));
             });
         }
@@ -964,10 +987,10 @@ public final class DumpService {
         return input.replace(':', '_').replace('/', '_').replace('\\', '_');
     }
 
-    private record BiomeTagEntry(String id, List<String> tags) {
+    static record BiomeTagEntry(String id, List<String> tags) {
     }
 
-    private record TagEntry(String id, List<String> values) {
+    static record TagEntry(String id, List<String> values) {
     }
 
     private record RecipeEntry(String id, String providedBy, String type, String group,

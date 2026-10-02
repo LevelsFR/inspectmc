@@ -130,6 +130,16 @@ public final class MinecraftCompat {
         return null;
     }
 
+    public static Object callNoArg(Object target, String... names) {
+        for (String name : names) {
+            Object value = call(target, name);
+            if (value != null) {
+                return value;
+            }
+        }
+        return null;
+    }
+
     public static int chunkX(ChunkPos pos) {
         Object value = invoke(pos, "x", "getX");
         return value instanceof Number number ? number.intValue() : 0;
