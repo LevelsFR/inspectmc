@@ -8,7 +8,7 @@ Thanks for helping improve InspectMC.
 - Do not bundle unrelated formatting or refactors with a functional change.
 - For mod-code changes, explain the player/developer-visible effect and how it was tested.
 - Preserve Fabric and NeoForge behavior unless the change is intentionally loader-specific.
-- Do not present experimental Minecraft 26.2 or 26.3 work as part of the public 1.21.1 release.
+- Preserve behavior across the supported Minecraft matrix (1.21.1, 26.2 and 26.3) unless a change is intentionally version-specific, and document any exception clearly.
 - Keep the changelog release-oriented. Do not add temporary development-only fixes as public release notes.
 
 ## Documentation changes
