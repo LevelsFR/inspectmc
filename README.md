@@ -6,12 +6,13 @@ InspectMC is an in-game development and inspection toolkit for Minecraft modpack
 
 ## Target
 
-- Public 1.0.0 release: Minecraft 1.21.1 only (strict version check)
-- Java 21
-- Fabric
-- NeoForge
+- Current version: **1.0.1**
+- Minecraft **1.21.1**, **26.2** and **26.3**
+- **Fabric** and **NeoForge**
+- Java **21** for Minecraft 1.21.1
+- Java **25** for Minecraft 26.2 and 26.3 source builds
 
-Experimental forward-port work for Minecraft 26.2 and 26.3 is kept under `versions/` for development and is not part of the public 1.0.0 release.
+Use the JAR matching your Minecraft version and mod loader. The `buildAllVersions` Gradle task builds and stages all six supported loader/version artifacts.
 
 ## Commands
 
@@ -52,7 +53,7 @@ Experimental forward-port work for Minecraft 26.2 and 26.3 is kept under `versio
 
 Dump files are written under `inspectmc/dumps` in the game or server working directory. Every export keeps a timestamped archive and atomically updates a stable `*-latest.*` alias for scripts and Discord bots.
 
-`/inspectmc dump biomes` defaults to a real Excel `.xlsx` workbook and accepts `biomes-with-tags` as an alias. The workbook opens on an explanatory `Overview` sheet, followed by a filterable `Biomes` summary and a normalized `Biome Tags` sheet with one biome/tag relation per row. Headers are styled, columns are sized and the first row remains visible while scrolling.
+`/inspectmc dump biomes` defaults to a real Excel `.xlsx` workbook and accepts `biomes-with-tags` as an alias. The workbook opens on an explanatory `Overview` sheet, followed by a filterable `Biomes` summary and a normalized `Biome Tags` sheet with one biome/tag relation per row. Headers are styled, columns are sized and the first row remains visible while scrolling. Biome/tag relationships are collected from the live runtime biome registry, so loaded vanilla, modded and datapack-provided tags are preserved in biome exports.
 
 CSV remains the stable RFC 4180 machine format. JSON exports use schema version 2, UTC timestamps and common Minecraft, InspectMC and loader metadata. IDs, tags, relations and recipes are sorted deterministically. Recipe exports now include their type, group, result, quantity and accepted ingredient alternatives.
 
