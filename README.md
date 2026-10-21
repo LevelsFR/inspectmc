@@ -128,3 +128,11 @@ InspectMC intentionally does not require Architectury API at runtime.
 ## Permissions
 
 Looking at blocks, inspecting the held item/current biome/self, and registry search are available to regular players. Block-entity and entity NBT, another player, world searches, loaded-state diagnostics, statistics, pack information and dumps require the configured vanilla permission level.
+
+## Project guide and verified downloads
+
+[Complete project guide](docs/PROJECT_GUIDE.md) — features, dependency metadata, commands, configuration, source map and build instructions.
+
+- [Source repository](https://github.com/LevelsFR/inspectmc/tree/main) (public).
+- [CurseForge](https://www.curseforge.com/minecraft/mc-mods/inspectmc) — published project verified under LevelsFR.
+- Modrinth: no matching project found in the public LevelsFR project list checked on 2026-10-21.
