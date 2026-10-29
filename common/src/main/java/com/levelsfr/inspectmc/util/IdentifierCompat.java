@@ -71,29 +71,29 @@ public final class IdentifierCompat {
     public static ArgumentType<?> argumentType() {
         String[] classes = {
                 "net.minecraft.commands.arguments.IdentifierArgument",
-                "net.minecraft.commands.arguments.ResourceLocationArgument"
+                "net.minecraft.commands.arguments.ResourceLocationArgument",
+                "net.minecraft.class_2232"
         };
         for (String className : classes) {
             Object argument = invokeStatic(className, "id");
             if (argument instanceof ArgumentType<?> typed) {
                 return typed;
             }
+            try {
+                // The 1.21.1 Fabric runtime remaps the factory name, but not constructors.
+                Object instance = Class.forName(className).getConstructor().newInstance();
+                if (instance instanceof ArgumentType<?> typed) {
+                    return typed;
+                }
+            } catch (ReflectiveOperationException ignored) {
+                // Try the next Minecraft namespace.
+            }
         }
         throw new IllegalStateException("No Minecraft identifier command argument is available");
     }
 
     public static String argument(CommandContext<?> context, String name) {
-        String[] classes = {
-                "net.minecraft.commands.arguments.IdentifierArgument",
-                "net.minecraft.commands.arguments.ResourceLocationArgument"
-        };
-        for (String className : classes) {
-            Object value = invokeStatic(className, "getId", context, name);
-            if (value != null) {
-                return value(value);
-            }
-        }
-        throw new IllegalStateException("No Minecraft identifier command argument is available");
+        return value(context.getArgument(name, Object.class));
     }
 
     public static boolean registryContains(Registry<?> registry, String id) {

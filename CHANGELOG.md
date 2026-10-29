@@ -5,6 +5,10 @@
 * Updated optional **Pokémon diagnostics** to **OS Cobblemon Library 1.5.2**.
 * The optional integration now targets **Cobblemon 1.8.2–1.8.4**; Cobblemon and OSCL remain optional.
 
+## Fixes
+
+* Fixed a **Fabric single-player crash** caused by registry command argument registration.
+
 # InspectMC changelog
 
 ## 1.0.1
