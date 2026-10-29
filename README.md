@@ -6,7 +6,7 @@ InspectMC is an in-game development and inspection toolkit for Minecraft modpack
 
 ## Target
 
-- Current version: **1.0.1**
+- Minecraft 1.21.1 version: **1.0.2**
 - Minecraft **1.21.1**, **26.2** and **26.3**
 - **Fabric** and **NeoForge**
 - Java **21** for Minecraft 1.21.1
@@ -90,13 +90,13 @@ InspectMC detects Cobblemon world spawn pools through the datapack resources cur
 
 ## Optional Cobblemon API diagnostics
 
-When both Cobblemon 1.8.1–1.8.x and OS Cobblemon Library 1.1.x are installed, InspectMC enables an optional runtime integration. `/inspectmc inspect entity` automatically adds species, form, shiny/Alpha state, aspects, labels, marks, types, ability category, size, owner, battle state and IV diagnostics for a targeted Cobblemon Pokémon. The dedicated `/inspectmc cobblemon entity` command exposes the same view directly.
+When both Cobblemon 1.8.2–1.8.4 and OS Cobblemon Library 1.5.2+ are installed, InspectMC enables an optional runtime integration. `/inspectmc inspect entity` automatically adds species, form, shiny/Alpha state, aspects, labels, marks, types, ability category, size, owner, battle state and IV diagnostics for a targeted Cobblemon Pokémon. The dedicated `/inspectmc cobblemon entity` command exposes the same view directly.
 
 `/inspectmc cobblemon player [player]` summarizes Party, PC and Pokédex progress. `/inspectmc cobblemon find <property_query>` searches the executing player's owned Pokémon with Cobblemon's native property syntax, for example `species=pikachu shiny=true`; operators can use `find player <player> <property_query>` for another player. `/inspectmc cobblemon status` reports whether the optional integration is available.
 
 The API integration is read-only and remains isolated from the base mod. InspectMC still loads and retains all non-Cobblemon features when either optional dependency is absent.
 
-For source builds that compile the optional integration, publish OS Cobblemon Library 1.1.0 to Maven Local first with its `scripts/publish-local.ps1` helper. The released InspectMC JARs do not bundle Cobblemon or OS Cobblemon Library; they only declare both as optional loader suggestions/dependencies.
+For source builds that compile the optional integration, publish OS Cobblemon Library 1.5.2 to Maven Local first with its `scripts/publish-local.ps1` helper. The released InspectMC JARs do not bundle Cobblemon or OS Cobblemon Library; they only declare both as optional loader suggestions/dependencies.
 
 ## Release information
 

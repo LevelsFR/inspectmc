@@ -1,3 +1,10 @@
+# InspectMC v1.0.2
+
+## Changes
+
+* Updated optional **Pokémon diagnostics** to **OS Cobblemon Library 1.5.2**.
+* The optional integration now targets **Cobblemon 1.8.2–1.8.4**; Cobblemon and OSCL remain optional.
+
 # InspectMC changelog
 
 ## 1.0.1

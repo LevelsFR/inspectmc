@@ -200,13 +200,18 @@ tasks.register('buildAllVersions') {
         releaseDir.mkdirs()
 
         def modVersion = providers.gradleProperty('mod_version').get()
+        def targetVersions = ['26.2', '26.3'].collectEntries { target ->
+            def properties = new Properties()
+            file("versions/${target}/gradle.properties").withInputStream { properties.load(it) }
+            [(target): properties.getProperty('mod_version')]
+        }
         def artifacts = [
                 [file("fabric/build/libs/${archives_name}-fabric-${modVersion}.jar"), "${archives_name}-fabric-mc1.21.1-${modVersion}.jar"],
                 [file("neoforge/build/libs/${archives_name}-neoforge-${modVersion}.jar"), "${archives_name}-neoforge-mc1.21.1-${modVersion}.jar"],
-                [file("versions/26.2/fabric/build/libs/${archives_name}-fabric-${modVersion}.jar"), "${archives_name}-fabric-mc26.2-${modVersion}.jar"],
-                [file("versions/26.2/neoforge/build/libs/${archives_name}-neoforge-${modVersion}.jar"), "${archives_name}-neoforge-mc26.2-${modVersion}.jar"],
-                [file("versions/26.3/fabric/build/libs/${archives_name}-fabric-${modVersion}.jar"), "${archives_name}-fabric-mc26.3-${modVersion}.jar"],
-                [file("versions/26.3/neoforge/build/libs/${archives_name}-neoforge-${modVersion}.jar"), "${archives_name}-neoforge-mc26.3-${modVersion}.jar"]
+                [file("versions/26.2/fabric/build/libs/${archives_name}-fabric-${targetVersions['26.2']}.jar"), "${archives_name}-fabric-mc26.2-${targetVersions['26.2']}.jar"],
+                [file("versions/26.2/neoforge/build/libs/${archives_name}-neoforge-${targetVersions['26.2']}.jar"), "${archives_name}-neoforge-mc26.2-${targetVersions['26.2']}.jar"],
+                [file("versions/26.3/fabric/build/libs/${archives_name}-fabric-${targetVersions['26.3']}.jar"), "${archives_name}-fabric-mc26.3-${targetVersions['26.3']}.jar"],
+                [file("versions/26.3/neoforge/build/libs/${archives_name}-neoforge-${targetVersions['26.3']}.jar"), "${archives_name}-neoforge-mc26.3-${targetVersions['26.3']}.jar"]
         ]
 
         artifacts.each { artifact, outputName ->

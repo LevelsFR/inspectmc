@@ -37,13 +37,13 @@ side = "CLIENT"
 [[dependencies.inspectmc]]
 modId = "cobblemon"
 type = "optional"
-versionRange = "[1.8.1,1.9.0)"
+versionRange = "[1.8.2,1.8.5)"
 ordering = "AFTER"
 side = "BOTH"
 
 [[dependencies.inspectmc]]
 modId = "os_cobblemon_library"
 type = "optional"
-versionRange = "[1.1.0,2.0.0)"
+versionRange = "[1.5.2,2.0.0)"
 ordering = "AFTER"
 side = "BOTH"

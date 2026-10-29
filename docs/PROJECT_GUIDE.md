@@ -2,7 +2,7 @@
 
 In-game inspection and export tools for modpack creators, datapack authors and developers.
 
-Source and publication snapshot: **2026-10-21**. This guide describes the checked-out source; a download page can contain an earlier release.
+Source and publication snapshot: **2026-10-29**. This guide describes the checked-out source; a download page can contain an earlier release.
 
 ## Status and official links
 
@@ -22,7 +22,7 @@ Source and publication snapshot: **2026-10-21**. This guide describes the checke
 
 | Component | Value |
 | --- | --- |
-| Source version | `1.0.1` |
+| Source version | `1.0.2` |
 | Minecraft baseline | `1.21.1` |
 | JDK | `21` |
 | Active branch | `main` |
@@ -35,13 +35,13 @@ Source and publication snapshot: **2026-10-21**. This guide describes the checke
 | Fabric | `fabric-api` | `*` | required |
 | Fabric | `cloth-config` | `*` | suggests |
 | Fabric | `modmenu` | `*` | suggests |
-| Fabric | `cobblemon` | `>=1.8.1 <1.9.0` | suggests |
-| Fabric | `os_cobblemon_library` | `>=1.1.0 <2.0.0` | suggests |
+| Fabric | `cobblemon` | `>=1.8.2 <1.8.5` | suggests |
+| Fabric | `os_cobblemon_library` | `>=1.5.2 <2.0.0` | suggests |
 | NeoForge | `neoforge` | `[21.1,)` | required; BOTH |
 | NeoForge | `minecraft` | `[1.21.1]` | required; BOTH |
 | NeoForge | `cloth_config` | `[15.0.140,)` | optional; CLIENT |
-| NeoForge | `cobblemon` | `[1.8.1,1.9.0)` | optional; BOTH |
-| NeoForge | `os_cobblemon_library` | `[1.1.0,2.0.0)` | optional; BOTH |
+| NeoForge | `cobblemon` | `[1.8.2,1.8.5)` | optional; BOTH |
+| NeoForge | `os_cobblemon_library` | `[1.5.2,2.0.0)` | optional; BOTH |
 
 The table reflects loader metadata. Build-time version pins are in [gradle.properties](../gradle.properties). A dependency used only for compilation or optional integration is not automatically required for every installation.
 
@@ -129,7 +129,7 @@ Run commands from the repository root using a matching JDK and the committed Gra
 
 Loader JARs are normally written under the corresponding `build/libs` directory. Aggregate projects document their collected artifact layout in the main README or build helper.
 
-The build pins OS Cobblemon Library `1.1.0`. Inspect the build repositories before compiling; projects that resolve it from Maven Local need the matching local publication. See the [library Maven Local guide](https://github.com/LevelsFR/OS-Cobblemon-Library/blob/1.21.1/main/docs/LOCAL_MAVEN.md).
+The build pins OS Cobblemon Library `1.5.2`. Inspect the build repositories before compiling; projects that resolve it from Maven Local need the matching local publication. See the [library Maven Local guide](https://github.com/LevelsFR/OS-Cobblemon-Library/blob/levelsfr/oscl-1.5.2-loader-detection/docs/LOCAL_MAVEN.md).
 
 ## Documentation index
 
