@@ -1,3 +1,18 @@
+# InspectMC v1.0.3
+
+## Changes
+
+* Align all six Fabric and NeoForge release builds on Minecraft 1.21.1, 26.2 and 26.3 at version **1.0.3**.
+* Improved Excel exports with a clear overview, wrapped and spaced cells, readable row heights, frozen key columns, filters, and landscape print layout.
+* Organized dump archives under separate world and export folders; desktop open buttons now fall back to the operating system launcher.
+* Shortened exceptionally long Excel cells with a visible note; JSON and CSV retain the full values.
+
+## Fixes
+
+* Fixed recipe exports so recipe **types**, **groups** and **ingredients** are read correctly.
+* Fixed malformed workbook metadata that prevented Excel from opening exported `.xlsx` files.
+* Applied the corrected recipe compatibility adapter to Minecraft 26.2 and 26.3 builds.
+
 # InspectMC v1.0.2
 
 ## Changes

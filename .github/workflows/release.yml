@@ -1,0 +1,194 @@
+name: Prepare and publish release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version shared by every loader and Minecraft target
+        required: true
+        default: '1.0.3'
+        type: string
+      publish_github:
+        description: Create or update the public GitHub Release
+        required: true
+        default: false
+        type: boolean
+      publish_curseforge:
+        description: Upload all six JARs to CurseForge
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Set up Java 21
+        uses: actions/setup-java@dded0888837ed1f317902acf8a20df0ad188d165 # v5.0.0
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: gradle
+
+      - name: Set up Java 25
+        uses: actions/setup-java@dded0888837ed1f317902acf8a20df0ad188d165 # v5.0.0
+        with:
+          distribution: temurin
+          java-version: '25'
+
+      - name: Validate release version
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
+        run: |
+          if [[ "$GITHUB_REF" != 'refs/heads/main' ]]; then
+            echo 'Run this workflow from main.' >&2
+            exit 1
+          fi
+          if [[ ! "$RELEASE_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$ ]]; then
+            echo 'Release version must be a plain semantic version.' >&2
+            exit 1
+          fi
+          root_version="$(sed -n 's/^mod_version=//p' gradle.properties)"
+          [[ "$root_version" == "$RELEASE_VERSION" ]] || { echo "Expected version $root_version from gradle.properties." >&2; exit 1; }
+          for target in 26.2 26.3; do
+            target_version="$(sed -n 's/^mod_version=//p' "versions/$target/gradle.properties")"
+            [[ "$target_version" == "$RELEASE_VERSION" ]] || { echo "Minecraft $target is set to $target_version, not $RELEASE_VERSION." >&2; exit 1; }
+          done
+
+      - name: Verify and stage all six artifacts
+        run: ./gradlew -Pjava21_home="$JAVA_HOME_21_X64" -Pjava25_home="$JAVA_HOME_25_X64" verifyRelease buildAllVersions --no-daemon --console=plain
+
+      - name: Upload release JARs
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: inspectmc-v${{ inputs.version }}-all-loaders
+          path: build/releases/latest/*.jar
+          if-no-files-found: error
+          retention-days: 14
+
+  publish-github:
+    if: ${{ inputs.publish_github }}
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out release notes
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Download release JARs
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: inspectmc-v${{ inputs.version }}-all-loaders
+          path: release-assets
+
+      - name: Extract this version's release notes
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
+        run: |
+          awk -v heading="# InspectMC v${RELEASE_VERSION}" '
+            $0 == heading { found = 1; print; next }
+            found && /^# InspectMC v/ { exit }
+            found { print }
+            END { if (!found) exit 1 }
+          ' CHANGELOG.md > release-notes.md
+
+      - name: Publish GitHub Release
+        uses: Kira-NT/mc-publish@c23376546a97f5ba7984e94445da359459b14419 # v3.3.2
+        with:
+          files: release-assets/*.jar
+          name: InspectMC v${{ inputs.version }} for Minecraft 1.21.1, 26.2 and 26.3
+          version: ${{ inputs.version }}
+          version-type: release
+          changelog-file: release-notes.md
+          github-tag: v${{ inputs.version }}
+          github-commitish: main
+          github-generate-changelog: false
+          github-draft: false
+          github-prerelease: false
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+  publish-mod-platforms:
+    if: ${{ inputs.publish_curseforge }}
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - minecraft: '1.21.1'
+            loader: fabric
+            jar: inspectmc-fabric-mc1.21.1
+          - minecraft: '1.21.1'
+            loader: neoforge
+            jar: inspectmc-neoforge-mc1.21.1
+          - minecraft: '26.2'
+            loader: fabric
+            jar: inspectmc-fabric-mc26.2
+          - minecraft: '26.2'
+            loader: neoforge
+            jar: inspectmc-neoforge-mc26.2
+          - minecraft: '26.3'
+            loader: fabric
+            jar: inspectmc-fabric-mc26.3
+          - minecraft: '26.3'
+            loader: neoforge
+            jar: inspectmc-neoforge-mc26.3
+    steps:
+      - name: Check out release notes
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Download release JARs
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: inspectmc-v${{ inputs.version }}-all-loaders
+          path: release-assets
+
+      - name: Extract this version's release notes
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
+        run: |
+          awk -v heading="# InspectMC v${RELEASE_VERSION}" '
+            $0 == heading { found = 1; print; next }
+            found && /^# InspectMC v/ { exit }
+            found { print }
+            END { if (!found) exit 1 }
+          ' CHANGELOG.md > release-notes.md
+
+      - name: Check selected platform credentials
+        env:
+          PUBLISH_CURSEFORGE: ${{ inputs.publish_curseforge }}
+          CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_TOKEN }}
+        run: |
+          if [[ "$PUBLISH_CURSEFORGE" == 'true' && -z "$CURSEFORGE_TOKEN" ]]; then
+            echo 'Set the CURSEFORGE_TOKEN repository secret before enabling CurseForge uploads.' >&2
+            exit 1
+          fi
+
+      - name: Publish this loader and Minecraft version
+        uses: Kira-NT/mc-publish@c23376546a97f5ba7984e94445da359459b14419 # v3.3.2
+        with:
+          files: release-assets/${{ matrix.jar }}-${{ inputs.version }}.jar
+          name: InspectMC v${{ inputs.version }} for Minecraft ${{ matrix.minecraft }} (${{ matrix.loader }})
+          version: ${{ inputs.version }}-mc${{ matrix.minecraft }}-${{ matrix.loader }}
+          version-type: release
+          changelog-file: release-notes.md
+          loaders: ${{ matrix.loader }}
+          game-versions: ${{ matrix.minecraft }}
+          game-version-filter: none
+          environment: client | server
+          curseforge-id: ${{ inputs.publish_curseforge && '1703471' || '' }}
+          curseforge-token: ${{ inputs.publish_curseforge && secrets.CURSEFORGE_TOKEN || '' }}
+          fail-mode: fail

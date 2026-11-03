@@ -11,6 +11,7 @@ repositories {
 
 sourceSets.main.java.srcDirs = [
         rootProject.file('../../common/src/main/java'),
+        rootProject.file('../shared-modern/src/main/java'),
         rootProject.file('../../neoforge/src/main/java'),
         project.file('src/main/java')
 ]
@@ -20,7 +21,8 @@ sourceSets.main.java.exclude(
         'com/levelsfr/inspectmc/client/config/ClothConfigUnavailableScreen.java',
         'com/levelsfr/inspectmc/neoforge/client/InspectMCNeoForgeClient.java',
         'com/levelsfr/inspectmc/neoforge/InspectMCNeoForge.java',
-        'com/levelsfr/inspectmc/inspection/BiomeInspector.java'
+        'com/levelsfr/inspectmc/inspection/BiomeInspector.java',
+        'com/levelsfr/inspectmc/dump/RecipeExportCompat.java'
 )
 
 neoForge {

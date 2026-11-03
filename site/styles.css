@@ -274,20 +274,6 @@ html[data-theme="light"] a { color: #286fdb; }
   color: #f16436;
 }
 
-.modrinth-badge {
-  border-color: rgba(27,217,106,.34);
-  background: linear-gradient(180deg,rgba(27,217,106,.16),rgba(12,82,43,.12));
-}
-.modrinth-badge:hover {
-  border-color: rgba(70,233,136,.68);
-  background: linear-gradient(180deg,rgba(27,217,106,.25),rgba(12,82,43,.20));
-}
-.modrinth-icon {
-  border: 1px solid rgba(27,217,106,.45);
-  background: #102b1b;
-  color: #1bd96a;
-}
-
 html[data-theme="light"] .community-badge {
   color: #253043;
   box-shadow: inset 0 1px 0 rgba(255,255,255,.92), 0 3px 10px rgba(31,48,73,.07);
@@ -296,7 +282,6 @@ html[data-theme="light"] .community-copy small { color: #657184; }
 html[data-theme="light"] .bisecthosting-badge { background: linear-gradient(180deg,#effcff,#ddf8fb); }
 html[data-theme="light"] .discord-badge { background: linear-gradient(180deg,#f1f2ff,#e7e9ff); }
 html[data-theme="light"] .curseforge-badge { background: linear-gradient(180deg,#fff5f1,#ffe9e1); }
-html[data-theme="light"] .modrinth-badge { background: linear-gradient(180deg,#effbf4,#e1f7ea); }
 
 .theme-toggle {
   display: grid;

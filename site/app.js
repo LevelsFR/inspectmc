@@ -174,21 +174,7 @@
     }
   }
 
-  async function loadShield(url, targetId, suffix) {
-    const target = document.getElementById(targetId);
-    if (!target) return;
-    try {
-      const data = await getJson(url);
-      const value = String(data.message || "").trim();
-      if (value) target.textContent = value + " " + suffix;
-    } catch {}
-  }
-
   loadDiscord();
-  loadShield("https://img.shields.io/curseforge/dt/1410772.json", "curseforgeStats", "downloads");
-  loadShield("https://img.shields.io/modrinth/dt/recipe-item-sync.json", "modrinthStats", "downloads");
 
   setInterval(loadDiscord, 300000);
-  setInterval(() => loadShield("https://img.shields.io/curseforge/dt/1410772.json", "curseforgeStats", "downloads"), 600000);
-  setInterval(() => loadShield("https://img.shields.io/modrinth/dt/recipe-item-sync.json", "modrinthStats", "downloads"), 600000);
 })();

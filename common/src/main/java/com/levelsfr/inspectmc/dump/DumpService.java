@@ -20,9 +20,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.biome.Biome;
 
 import java.io.ByteArrayOutputStream;
@@ -37,9 +34,9 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
@@ -76,7 +73,7 @@ public final class DumpService {
         byte[] workbook = XlsxWriter.write(List.of(
                 overviewSheet("Registry list", "Runtime registries available to InspectMC", rows.size()),
                 new XlsxWriter.Sheet("Registries", List.of("Registry ID", "Namespace", "Path"), rows,
-                        List.of(46.0D, 22.0D, 42.0D))));
+                        List.of(36.0D, 18.0D, 36.0D))));
         return writeBytes(server, "registries", "xlsx", workbook);
     }
 
@@ -114,7 +111,7 @@ public final class DumpService {
         byte[] workbook = XlsxWriter.write(List.of(
                 overviewSheet("Registry export", "Runtime entries from " + registryId, rows.size()),
                 new XlsxWriter.Sheet("Entries", List.of("Entry ID", "Namespace", "Path", "Provided by"),
-                        rows, List.of(42.0D, 22.0D, 40.0D, 34.0D))));
+                        rows, List.of(36.0D, 18.0D, 36.0D, 32.0D))));
         return writeBytes(server, safeName("registry_" + registryId), "xlsx", workbook);
     }
 
@@ -161,7 +158,7 @@ public final class DumpService {
         byte[] workbook = XlsxWriter.write(List.of(
                 overviewSheet("Tag export", "One row per tag/value relation in " + registryId, rows.size()),
                 new XlsxWriter.Sheet("Tags", List.of("Registry ID", "Tag ID", "Value ID"), rows,
-                        List.of(38.0D, 46.0D, 46.0D))));
+                        List.of(36.0D, 44.0D, 44.0D))));
         return writeBytes(server, safeName("tags_" + registryId), "xlsx", workbook);
     }
 
@@ -179,8 +176,8 @@ public final class DumpService {
         List<RecipeEntry> recipes = recipeEntries(server);
         byte[] workbook = XlsxWriter.write(List.of(
                 overviewSheet("Recipe export", "Readable summary of runtime recipes and accepted ingredients", recipes.size()),
-                new XlsxWriter.Sheet("Recipes", recipeHeaders(true), recipeRows(recipes),
-                        List.of(46.0D, 20.0D, 32.0D, 32.0D, 24.0D, 42.0D, 14.0D, 26.0D, 70.0D, 70.0D))));
+                new XlsxWriter.Sheet("Recipes", recipeHeaders(true), recipeRows(recipes, true),
+                        List.of(36.0D, 18.0D, 27.0D, 25.0D, 22.0D, 34.0D, 12.0D, 48.0D, 14.0D, 58.0D), 2, true)));
         return writeBytes(server, "recipes", "xlsx", workbook);
     }
 
@@ -219,36 +216,36 @@ public final class DumpService {
         long errors = snapshot.issues().stream()
                 .filter(issue -> issue.severity() == CobblemonSpawnInspector.Severity.ERROR).count();
         long warnings = snapshot.issues().size() - errors;
-        List<List<String>> overview = new ArrayList<>(overviewSheet("Cobblemon spawn audit",
-                "Loaded world spawn pools, presets, conditions and unresolved references", snapshot.spawns().size()).rows());
-        overview.add(List.of("Pool files", Integer.toString(snapshot.poolFiles())));
-        overview.add(List.of("Pokemon", Integer.toString(snapshot.speciesCount())));
-        overview.add(List.of("Presets", Integer.toString(snapshot.presets().size())));
-        overview.add(List.of("Errors", Long.toString(errors)));
-        overview.add(List.of("Warnings", Long.toString(warnings)));
-        overview.add(List.of("Interpretation", "Warnings can be intentional; inspect duplicate IDs and optional mod references before changing a datapack."));
+        List<List<String>> overviewRows = List.of(
+                List.of("Pool files", Integer.toString(snapshot.poolFiles())),
+                List.of("Pokemon", Integer.toString(snapshot.speciesCount())),
+                List.of("Presets", Integer.toString(snapshot.presets().size())),
+                List.of("Errors", Long.toString(errors)),
+                List.of("Warnings", Long.toString(warnings)),
+                List.of("Interpretation", "Warnings can be intentional; inspect duplicate IDs and optional mod references before changing a datapack."));
 
         List<XlsxWriter.Sheet> sheets = List.of(
-                new XlsxWriter.Sheet("Overview", List.of("Field", "Value"), List.copyOf(overview),
-                        List.of(28.0D, 100.0D)),
+                overviewSheet("Cobblemon spawn audit",
+                        "Loaded world spawn pools, presets, conditions and unresolved references",
+                        "Spawn entries", snapshot.spawns().size(), overviewRows),
                 new XlsxWriter.Sheet("Problems", List.of("Severity", "Code", "Affected resource", "Details"),
-                        spawnIssueRows(snapshot), List.of(14.0D, 30.0D, 64.0D, 100.0D)),
-                new XlsxWriter.Sheet("Spawn Entries", spawnHeaders(true), spawnRows(snapshot),
-                        List.of(28.0D, 34.0D, 24.0D, 12.0D, 18.0D, 14.0D, 60.0D, 18.0D,
-                                18.0D, 45.0D, 35.0D, 35.0D, 58.0D, 32.0D, 14.0D, 68.0D, 68.0D)),
+                        spawnIssueRows(snapshot), List.of(12.0D, 26.0D, 48.0D, 64.0D)),
+                new XlsxWriter.Sheet("Spawn Entries", spawnHeaders(true), spawnRows(snapshot, "\n"),
+                        List.of(30.0D, 30.0D, 22.0D, 11.0D, 17.0D, 12.0D, 30.0D, 18.0D,
+                                20.0D, 36.0D, 36.0D, 36.0D, 48.0D, 32.0D, 10.0D, 56.0D, 56.0D), 2, true),
                 new XlsxWriter.Sheet("Conditions",
                         List.of("Spawn ID", "Pokemon", "Kind", "Condition", "Value", "Source resource"),
-                        spawnConditionRows(snapshot), List.of(32.0D, 28.0D, 18.0D, 30.0D, 90.0D, 64.0D)),
+                        spawnConditionRows(snapshot), List.of(30.0D, 26.0D, 18.0D, 28.0D, 58.0D, 50.0D), 2, true),
                 new XlsxWriter.Sheet("Presets",
                         List.of("Preset ID", "Condition", "Anticondition", "Full JSON"),
-                        spawnPresetRows(snapshot), List.of(42.0D, 80.0D, 80.0D, 110.0D)),
+                        spawnPresetRows(snapshot), List.of(38.0D, 52.0D, 52.0D, 64.0D), 2, true),
                 new XlsxWriter.Sheet("Buckets", List.of("Bucket", "Entries", "Pokemon"),
-                        spawnBucketRows(snapshot), List.of(24.0D, 16.0D, 16.0D)),
+                        spawnBucketRows(snapshot), List.of(24.0D, 14.0D, 14.0D)),
                 new XlsxWriter.Sheet("Dependencies",
                         List.of("Spawn ID", "Pokemon", "Rule", "Mod ID", "Currently loaded", "Source resource"),
-                        spawnDependencyRows(snapshot), List.of(32.0D, 28.0D, 28.0D, 28.0D, 18.0D, 64.0D)),
+                        spawnDependencyRows(snapshot), List.of(30.0D, 26.0D, 28.0D, 28.0D, 16.0D, 52.0D)),
                 new XlsxWriter.Sheet("Source Packs", List.of("Pack", "Pool entries", "Pokemon"),
-                        spawnPackRows(snapshot), List.of(50.0D, 18.0D, 16.0D)));
+                        spawnPackRows(snapshot), List.of(44.0D, 14.0D, 14.0D)));
         return writeBytes(server, "cobblemon_spawns", "xlsx", XlsxWriter.write(sheets));
     }
 
@@ -283,10 +280,10 @@ public final class DumpService {
         List<List<String>> relations = biomeTagRows(biomes);
         byte[] workbook = XlsxWriter.write(List.of(
                 overviewSheet("Biome export", "Use 'Biomes' for the summary and 'Biome Tags' for filtering tags", biomes.size()),
-                new XlsxWriter.Sheet("Biomes", biomeHeaders(true), biomeRows(biomes),
-                        List.of(44.0D, 22.0D, 38.0D, 34.0D, 14.0D, 68.0D)),
+                new XlsxWriter.Sheet("Biomes", biomeHeaders(true), biomeRows(biomes, "\n"),
+                        List.of(38.0D, 18.0D, 32.0D, 30.0D, 12.0D, 54.0D)),
                 new XlsxWriter.Sheet("Biome Tags", List.of("Biome ID", "Tag ID"), relations,
-                        List.of(46.0D, 52.0D))));
+                        List.of(38.0D, 50.0D))));
         return writeBytes(server, "biomes_tags", "xlsx", workbook);
     }
 
@@ -305,38 +302,57 @@ public final class DumpService {
         List<List<String>> loadedEntities = loadedEntityRows(server);
 
         List<XlsxWriter.Sheet> sheets = new ArrayList<>();
-        sheets.add(overviewSheet("InspectMC report", "Complete runtime snapshot for humans, scripts and Discord bots", registryEntries.size()));
+        List<List<String>> overviewRows = new ArrayList<>(List.of(
+                List.of("Mods", Integer.toString(mods.size())),
+                List.of("Datapacks", Integer.toString(datapacks.size())),
+                List.of("Dimensions", Integer.toString(dimensions.size())),
+                List.of("Loaded entity types", Integer.toString(loadedEntities.size())),
+                List.of("Registries", Integer.toString(registries.size())),
+                List.of("Registry entries", Integer.toString(registryEntries.size())),
+                List.of("Tag relations", Integer.toString(tags.size())),
+                List.of("Biomes", Integer.toString(biomes.size())),
+                List.of("Biome tag relations", Integer.toString(biomeTagRows(biomes).size())),
+                List.of("Recipes", Integer.toString(recipes.size()))));
+        if (CobblemonApiPresence.isCobblemonInstalled()) {
+            overviewRows.add(List.of("Cobblemon spawn entries", cobblemonSpawnsAvailable
+                    ? Integer.toString(spawns.spawns().size()) : "not available"));
+            if (cobblemonSpawnsAvailable) {
+                overviewRows.add(List.of("Cobblemon spawn issues", Integer.toString(spawns.issues().size())));
+            }
+        }
+        sheets.add(overviewSheet("InspectMC report", "Complete runtime snapshot for humans, scripts and Discord bots",
+                null, 0, overviewRows));
         sheets.addAll(List.of(new XlsxWriter.Sheet("Mods", List.of("Mod ID", "Name", "Version"), mods,
-                        List.of(28.0D, 42.0D, 24.0D)),
+                        List.of(24.0D, 42.0D, 20.0D)),
                 new XlsxWriter.Sheet("Datapacks", List.of("Pack ID"), datapacks,
-                        List.of(64.0D)),
+                        List.of(58.0D)),
                 new XlsxWriter.Sheet("Dimensions", List.of("Dimension", "Players", "Loaded entities", "Forced chunks"), dimensions,
-                        List.of(42.0D, 14.0D, 20.0D, 18.0D)),
+                        List.of(34.0D, 12.0D, 18.0D, 16.0D)),
                 new XlsxWriter.Sheet("Loaded Entities", List.of("Dimension", "Entity type", "Count"), loadedEntities,
-                        List.of(42.0D, 42.0D, 14.0D)),
+                        List.of(36.0D, 38.0D, 12.0D)),
                 new XlsxWriter.Sheet("Registries", List.of("Registry ID", "Namespace", "Path"), registries,
-                        List.of(46.0D, 22.0D, 42.0D)),
+                        List.of(34.0D, 18.0D, 34.0D)),
                 new XlsxWriter.Sheet("Registry Entries",
                         List.of("Registry ID", "Entry ID", "Namespace", "Path", "Provided by"), registryEntries,
-                        List.of(46.0D, 48.0D, 22.0D, 44.0D, 34.0D)),
+                        List.of(34.0D, 38.0D, 18.0D, 34.0D, 30.0D)),
                 new XlsxWriter.Sheet("Tags", List.of("Registry ID", "Tag ID", "Value ID"), tags,
-                        List.of(46.0D, 48.0D, 48.0D)),
-                new XlsxWriter.Sheet("Biomes", biomeHeaders(true), biomeRows(biomes),
-                        List.of(44.0D, 22.0D, 38.0D, 34.0D, 14.0D, 68.0D)),
+                        List.of(34.0D, 44.0D, 44.0D)),
+                new XlsxWriter.Sheet("Biomes", biomeHeaders(true), biomeRows(biomes, "\n"),
+                        List.of(38.0D, 18.0D, 32.0D, 30.0D, 12.0D, 54.0D)),
                 new XlsxWriter.Sheet("Biome Tags", List.of("Biome ID", "Tag ID"), biomeTagRows(biomes),
-                        List.of(46.0D, 52.0D)),
-                new XlsxWriter.Sheet("Recipes", recipeHeaders(true), recipeRows(recipes),
-                        List.of(46.0D, 20.0D, 32.0D, 32.0D, 24.0D, 42.0D, 14.0D, 26.0D, 70.0D, 70.0D))));
+                        List.of(38.0D, 50.0D)),
+                new XlsxWriter.Sheet("Recipes", recipeHeaders(true), recipeRows(recipes, true),
+                        List.of(36.0D, 18.0D, 27.0D, 25.0D, 22.0D, 34.0D, 12.0D, 48.0D, 14.0D, 58.0D), 2, true)));
         if (cobblemonSpawnsAvailable) {
             sheets.add(new XlsxWriter.Sheet("Spawn Problems",
                     List.of("Severity", "Code", "Affected resource", "Details"),
-                    spawnIssueRows(spawns), List.of(14.0D, 30.0D, 64.0D, 100.0D)));
-            sheets.add(new XlsxWriter.Sheet("Cobblemon Spawns", spawnHeaders(true), spawnRows(spawns),
-                    List.of(28.0D, 34.0D, 24.0D, 12.0D, 18.0D, 14.0D, 60.0D, 18.0D,
-                            18.0D, 45.0D, 35.0D, 35.0D, 58.0D, 32.0D, 14.0D, 68.0D, 68.0D)));
+                    spawnIssueRows(spawns), List.of(12.0D, 26.0D, 48.0D, 64.0D)));
+            sheets.add(new XlsxWriter.Sheet("Cobblemon Spawns", spawnHeaders(true), spawnRows(spawns, "\n"),
+                    List.of(30.0D, 30.0D, 22.0D, 11.0D, 17.0D, 12.0D, 30.0D, 18.0D,
+                            20.0D, 36.0D, 36.0D, 36.0D, 48.0D, 32.0D, 10.0D, 56.0D, 56.0D), 2, true));
             sheets.add(new XlsxWriter.Sheet("Spawn Conditions",
                     List.of("Spawn ID", "Pokemon", "Kind", "Condition", "Value", "Source resource"),
-                    spawnConditionRows(spawns), List.of(32.0D, 28.0D, 18.0D, 30.0D, 90.0D, 64.0D)));
+                    spawnConditionRows(spawns), List.of(30.0D, 26.0D, 18.0D, 28.0D, 58.0D, 50.0D), 2, true));
         }
 
         List<String> files = new ArrayList<>(List.of("manifest.json", "report.xlsx", "mods.csv", "datapacks.csv",
@@ -506,12 +522,16 @@ public final class DumpService {
     }
 
     private static List<List<String>> spawnRows(CobblemonSpawnInspector.Snapshot snapshot) {
+        return spawnRows(snapshot, " | ");
+    }
+
+    private static List<List<String>> spawnRows(CobblemonSpawnInspector.Snapshot snapshot, String listSeparator) {
         return snapshot.spawns().stream().map(entry -> List.of(
                 entry.id(), entry.pokemon(), entry.species(), Boolean.toString(entry.enabled()), entry.bucket(),
                 Double.toString(entry.weight()), entry.raw().has("weightMultiplier")
                         ? GSON.toJson(entry.raw().get("weightMultiplier")) : "",
-                entry.type(), entry.context(), String.join(" | ", entry.presets()),
-                String.join(" | ", entry.neededInstalledMods()), String.join(" | ", entry.neededUninstalledMods()),
+                entry.type(), entry.context(), String.join(listSeparator, entry.presets()),
+                String.join(listSeparator, entry.neededInstalledMods()), String.join(listSeparator, entry.neededUninstalledMods()),
                 entry.source().toString(), entry.sourcePack(), Integer.toString(entry.sourceIndex()),
                 GSON.toJson(entry.condition()), GSON.toJson(entry.anticondition()))).toList();
     }
@@ -587,43 +607,11 @@ public final class DumpService {
     }
 
     private static List<RecipeEntry> recipeEntries(MinecraftServer server) {
-        List<RecipeEntry> entries = new ArrayList<>();
-        for (RecipeHolder<?> holder : server.getRecipeManager().getRecipes()) {
-            Object recipe = holder.value();
-            Object type = MinecraftCompat.call(recipe, "getType", "type");
-            String typeId = type == null ? "<unknown>" : IdentifierCompat.value(BuiltInRegistries.RECIPE_TYPE.getKey((net.minecraft.world.item.crafting.RecipeType<?>) type));
-            Object resultValue = MinecraftCompat.call(recipe, "getResultItem", server.registryAccess());
-            if (resultValue == null) resultValue = MinecraftCompat.call(recipe, "resultItem");
-            ItemStack result = resultValue instanceof ItemStack stack ? stack : ItemStack.EMPTY;
-            List<List<String>> ingredients = new ArrayList<>();
-            Object ingredientValue = MinecraftCompat.call(recipe, "getIngredients", "ingredients");
-            if (ingredientValue instanceof Iterable<?> iterable) for (Object ingredient : iterable) {
-                Object empty = MinecraftCompat.call(ingredient, "isEmpty", "isEmptyIngredient");
-                if (Boolean.TRUE.equals(empty)) {
-                    continue;
-                }
-                try {
-                    Object itemsValue = MinecraftCompat.call(ingredient, "getItems", "items");
-                    ItemStack[] items = itemsValue instanceof ItemStack[] stacks ? stacks : new ItemStack[0];
-                    List<String> alternatives = Arrays.stream(items)
-                            .filter(stack -> !stack.isEmpty())
-                            .map(stack -> IdentifierCompat.value(BuiltInRegistries.ITEM.getKey(stack.getItem())))
-                            .distinct().sorted().toList();
-                    ingredients.add(alternatives.isEmpty() ? List.of("<custom ingredient>") : alternatives);
-                } catch (RuntimeException exception) {
-                    ingredients.add(List.of("<custom ingredient>"));
-                }
-            }
-            String resultId = result.isEmpty() ? "" : IdentifierCompat.value(BuiltInRegistries.ITEM.getKey(result.getItem()));
-            Object group = MinecraftCompat.call(recipe, "getGroup", "group");
-            String recipeId = IdentifierCompat.resourceKeyId(holder.id());
-            entries.add(new RecipeEntry(recipeId, ownerFor(recipeId),
-                    typeId, group == null ? "" : group.toString(), resultId,
-                    result.isEmpty() ? 0 : result.getCount(),
-                    result.isEmpty() ? "" : result.getComponents().toString(), List.copyOf(ingredients)));
-        }
-        entries.sort(Comparator.comparing(RecipeEntry::id));
-        return List.copyOf(entries);
+        return RecipeExportCompat.collect(server).stream()
+                .map(recipe -> new RecipeEntry(recipe.id(), ownerFor(recipe.id()), recipe.type(), recipe.group(),
+                        recipe.resultId(), recipe.resultCount(), recipe.resultComponents(), recipe.ingredients()))
+                .sorted(Comparator.comparing(RecipeEntry::id))
+                .toList();
     }
 
     private static List<BiomeTagEntry> biomeTags(MinecraftServer server) {
@@ -651,7 +639,7 @@ public final class DumpService {
 
     private static List<TagEntry> tagEntries(Registry<?> registry) {
         List<TagEntry> entries = new ArrayList<>();
-        Object tags = MinecraftCompat.callNoArg(registry, "getTags", "tags");
+        Object tags = MinecraftCompat.callNoArg(registry, "getTags", "tags", "method_40272");
         if (tags instanceof java.util.stream.Stream<?> stream) {
             stream.forEach(pair -> {
                 Object key = MinecraftCompat.callNoArg(pair, "getFirst", "key", "name");
@@ -659,7 +647,7 @@ public final class DumpService {
                 List<String> collectedValues = new ArrayList<>();
                 if (valuesObject instanceof Iterable<?> iterable) {
                     for (Object holder : iterable) {
-                        Object holderKey = MinecraftCompat.callNoArg(holder, "unwrapKey", "key");
+                        Object holderKey = MinecraftCompat.callNoArg(holder, "unwrapKey", "key", "method_40230");
                         if (holderKey instanceof java.util.Optional<?> optional) {
                             optional.ifPresent(value -> collectedValues.add(IdentifierCompat.resourceKeyId(value)));
                         } else if (holderKey != null) {
@@ -668,7 +656,7 @@ public final class DumpService {
                     }
                 } else if (valuesObject instanceof java.util.stream.Stream<?> valueStream) {
                     valueStream.forEach(holder -> {
-                        Object holderKey = MinecraftCompat.callNoArg(holder, "unwrapKey", "key");
+                        Object holderKey = MinecraftCompat.callNoArg(holder, "unwrapKey", "key", "method_40230");
                         if (holderKey instanceof java.util.Optional<?> optional) {
                             optional.ifPresent(value -> collectedValues.add(IdentifierCompat.resourceKeyId(value)));
                         } else if (holderKey != null) {
@@ -699,9 +687,13 @@ public final class DumpService {
     }
 
     private static List<List<String>> biomeRows(List<BiomeTagEntry> biomes) {
+        return biomeRows(biomes, " | ");
+    }
+
+    private static List<List<String>> biomeRows(List<BiomeTagEntry> biomes, String tagSeparator) {
         return biomes.stream().map(biome -> List.of(
                 biome.id(), IdentifierCompat.namespace(biome.id()), IdentifierCompat.path(biome.id()), ownerFor(biome.id()),
-                Integer.toString(biome.tags().size()), String.join(" | ", biome.tags()))).toList();
+                Integer.toString(biome.tags().size()), String.join(tagSeparator, biome.tags()))).toList();
     }
 
     private static List<List<String>> biomeTagRows(List<BiomeTagEntry> biomes) {
@@ -733,13 +725,25 @@ public final class DumpService {
     }
 
     private static List<List<String>> recipeRows(List<RecipeEntry> recipes) {
+        return recipeRows(recipes, false);
+    }
+
+    private static List<List<String>> recipeRows(List<RecipeEntry> recipes, boolean multilineIngredients) {
         return recipes.stream().map(recipe -> List.of(
                 recipe.id(), IdentifierCompat.namespace(recipe.id()), recipe.providedBy(), recipe.type(),
                 recipe.group(), recipe.resultId(), Integer.toString(recipe.resultCount()),
                 recipe.resultComponents(),
-                Integer.toString(recipe.ingredients().size()), recipe.ingredients().stream()
-                        .map(alternatives -> String.join(" | ", alternatives))
-                        .collect(java.util.stream.Collectors.joining(" + ")))).toList();
+                Integer.toString(recipe.ingredients().size()),
+                recipeIngredientSummary(recipe.ingredients(), multilineIngredients))).toList();
+    }
+
+    private static String recipeIngredientSummary(List<List<String>> ingredients, boolean multiline) {
+        List<String> slots = new ArrayList<>(ingredients.size());
+        for (int index = 0; index < ingredients.size(); index++) {
+            String alternatives = String.join(" | ", ingredients.get(index));
+            slots.add(multiline ? (index + 1) + ". " + alternatives : alternatives);
+        }
+        return String.join(multiline ? "\n" : " + ", slots);
     }
 
     private static List<List<String>> modRows() {
@@ -808,15 +812,24 @@ public final class DumpService {
     }
 
     private static XlsxWriter.Sheet overviewSheet(String export, String description, int entries) {
-        List<List<String>> rows = List.of(
+        return overviewSheet(export, description, "Rows / entries", entries, List.of());
+    }
+
+    private static XlsxWriter.Sheet overviewSheet(String export, String description, String countLabel, int count,
+                                                   List<List<String>> additionalRows) {
+        List<List<String>> rows = new ArrayList<>(List.of(
                 List.of("Export", export), List.of("Description", description),
                 List.of("Generated (UTC)", Instant.now().toString()),
                 List.of("Minecraft", MinecraftCompat.versionName()),
                 List.of("InspectMC", inspectMcVersion()), List.of("Loader", InspectMC.platform().loaderName()),
-                List.of("Schema version", Integer.toString(SCHEMA_VERSION)),
-                List.of("Rows / entries", Integer.toString(entries)),
-                List.of("Tip", "Use the filters in row 1. The header stays visible while scrolling."));
-        return new XlsxWriter.Sheet("Overview", List.of("Field", "Value"), rows, List.of(26.0D, 90.0D));
+                List.of("Schema version", Integer.toString(SCHEMA_VERSION))));
+        if (countLabel != null && !countLabel.isBlank()) {
+            rows.add(List.of(countLabel, Integer.toString(count)));
+        }
+        rows.addAll(additionalRows);
+        rows.add(List.of("Tip", "Use filters on the data sheets; row 1 and key columns stay visible while scrolling."));
+        return new XlsxWriter.Sheet("Overview", List.of("Field", "Value"), rows,
+                List.of(24.0D, 76.0D), 0, false);
     }
 
     private static JsonObject base(String type) {
@@ -905,7 +918,8 @@ public final class DumpService {
 
     private static DumpResult writeBytes(MinecraftServer server, String baseName, String extension, byte[] content)
             throws IOException {
-        Path directory = server.getServerDirectory().resolve("inspectmc").resolve("dumps");
+        Path directory = server.getServerDirectory().resolve("inspectmc").resolve("dumps")
+                .resolve(worldDirectoryName(server)).resolve(exportDirectoryName(baseName));
         Files.createDirectories(directory);
         String timestamp = FILE_TIME.format(LocalDateTime.now());
         Path archive = directory.resolve(baseName + "-" + timestamp + "." + extension);
@@ -985,6 +999,44 @@ public final class DumpService {
 
     private static String safeName(String input) {
         return input.replace(':', '_').replace('/', '_').replace('\\', '_');
+    }
+
+    private static String worldDirectoryName(MinecraftServer server) {
+        String worldName = server.getWorldData().getLevelName();
+        StringBuilder safeName = new StringBuilder(worldName.length());
+        for (int index = 0; index < worldName.length(); index++) {
+            char character = worldName.charAt(index);
+            safeName.append(character < 0x20 || "<>:\"/\\|?*".indexOf(character) >= 0 ? '_' : character);
+        }
+
+        String result = safeName.toString().strip().replaceAll("[. ]+$", "");
+        if (result.isBlank() || result.equals(".") || result.equals("..")) {
+            result = "world";
+        }
+        String reservedStem = result.split("\\.", 2)[0].toUpperCase(Locale.ROOT);
+        if (reservedStem.equals("CON") || reservedStem.equals("PRN") || reservedStem.equals("AUX")
+                || reservedStem.equals("NUL") || reservedStem.matches("COM[1-9]|LPT[1-9]")) {
+            result = "_" + result;
+        }
+        if (result.codePointCount(0, result.length()) > 80) {
+            result = result.substring(0, result.offsetByCodePoints(0, 80));
+        }
+        return result;
+    }
+
+    private static String exportDirectoryName(String baseName) {
+        if (baseName.startsWith("registry_")) {
+            return "registries";
+        }
+        if (baseName.startsWith("tags_")) {
+            return "tags";
+        }
+        return switch (baseName) {
+            case "biomes_tags" -> "biomes";
+            case "cobblemon_spawns" -> "spawns";
+            case "inspectmc_report" -> "reports";
+            default -> safeName(baseName);
+        };
     }
 
     static record BiomeTagEntry(String id, List<String> tags) {

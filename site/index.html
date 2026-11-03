@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="InspectMC v1.0.1 documentation for Minecraft 1.21.1, 26.2 and 26.3 on Fabric and NeoForge. In-game inspection, diagnostics, exports, runtime tools and optional Cobblemon support.">
+  <meta name="description" content="InspectMC v1.0.3 for Minecraft 1.21.1, 26.2 and 26.3 on Fabric and NeoForge. In-game inspection, diagnostics, exports, runtime tools and optional Cobblemon support.">
   <title>InspectMC Documentation</title>
   <link rel="stylesheet" href="styles.css">
   <script defer src="app.js"></script>
@@ -16,7 +16,7 @@
       <span class="brand-mark">IMC</span>
       <span class="brand-copy">
         <strong>InspectMC</strong>
-        <small>v1.0.1 Documentation</small>
+        <small>v1.0.3 Documentation</small>
       </span>
     </a>
 
@@ -42,6 +42,14 @@
       <span class="community-copy">
         <strong>Discord</strong>
         <small id="discordStats"><span class="status-dot"></span>Join the server</small>
+      </span>
+    </a>
+
+    <a class="community-badge curseforge-badge" href="https://www.curseforge.com/minecraft/mc-mods/inspectmc" target="_blank" rel="noopener noreferrer" aria-label="Download InspectMC from CurseForge">
+      <span class="community-icon curseforge-icon" aria-hidden="true">CF</span>
+      <span class="community-copy">
+        <strong>CurseForge</strong>
+        <small>InspectMC downloads</small>
       </span>
     </a>
 
@@ -84,6 +92,7 @@
         <div class="sidebar-title">Links</div>
         <a class="sidebar-link" href="https://www.bisecthosting.com/OurStory" target="_blank" rel="noopener noreferrer sponsored">🤝 BisectHosting Partner</a>
         <a class="sidebar-link" href="https://discord.gg/kb8NSTF45n" target="_blank" rel="noopener noreferrer">💬 Discord</a>
+        <a class="sidebar-link" href="https://www.curseforge.com/minecraft/mc-mods/inspectmc" target="_blank" rel="noopener noreferrer">📦 CurseForge downloads</a>
         <a class="sidebar-link" href="https://github.com/LevelsFR/inspectmc" target="_blank" rel="noopener noreferrer">💻 GitHub</a>
         <a class="sidebar-link" href="https://github.com/LevelsFR/inspectmc/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer">📝 Changelog</a>
         <a class="sidebar-link" href="https://www.patreon.com/c/OurStoryCollection" target="_blank" rel="noopener noreferrer">❤️ Patreon</a>
@@ -91,7 +100,7 @@
 
       <div class="sidebar-footer">
         <strong>InspectMC</strong>
-        <span>Documentation for v1.0.1</span>
+        <span>Documentation for v1.0.3</span>
       </div>
     </aside>
 
@@ -109,7 +118,7 @@
       <article>
         <section class="tab-panel active" id="overview" data-panel="overview">
           <div class="page-heading">
-            <span class="page-kicker">InspectMC v1.0.1</span>
+            <span class="page-kicker">InspectMC v1.0.3</span>
             <h1>InspectMC</h1>
             <p class="page-description">
               A modern in-game inspection and diagnostic toolkit for Minecraft modpack creators, datapack authors and mod developers.
@@ -117,8 +126,8 @@
           </div>
 
           <div class="hint hint-info">
-            <strong>Current release</strong>
-            <p>InspectMC 1.0.1 supports Minecraft 1.21.1, 26.2 and 26.3 on Fabric and NeoForge. Source builds use Java 21 for Minecraft 1.21.1 and Java 25 for Minecraft 26.2 and 26.3.</p>
+            <strong>Release target</strong>
+            <p>InspectMC 1.0.3 targets Minecraft 1.21.1, 26.2 and 26.3 on both Fabric and NeoForge. Use the JAR matching both your Minecraft version and loader.</p>
           </div>
 
           <h2>What does InspectMC do?</h2>
@@ -165,10 +174,10 @@
           <table>
             <thead><tr><th>Component</th><th>Requirement</th></tr></thead>
             <tbody>
-              <tr><td>Minecraft</td><td>1.21.1, 26.2 or 26.3</td></tr>
-              <tr><td>Java</td><td>21 for Minecraft 1.21.1; 25 for Minecraft 26.2 / 26.3 source builds</td></tr>
-              <tr><td>Fabric</td><td>Fabric Loader 0.19.3+ and Fabric API</td></tr>
-              <tr><td>NeoForge</td><td>NeoForge 21.1+</td></tr>
+              <tr><td>Minecraft</td><td>1.21.1, 26.2 and 26.3 (InspectMC 1.0.3)</td></tr>
+              <tr><td>Java</td><td>21 for Minecraft 1.21.1; 25 for Minecraft 26.2 / 26.3</td></tr>
+              <tr><td>Fabric</td><td>Fabric Loader and Fabric API builds for all three versions</td></tr>
+              <tr><td>NeoForge</td><td>NeoForge builds for all three versions</td></tr>
             </tbody>
           </table>
 
@@ -195,7 +204,7 @@
 
           <h2>Optional Cobblemon integration</h2>
           <p>
-            Cobblemon is not required. Additional runtime diagnostics become available when Cobblemon 1.8.1 to 1.8.x and OS Cobblemon Library 1.1.x are both installed.
+            Cobblemon is not required. Additional runtime diagnostics become available with Cobblemon 1.8.2–1.8.4 and OS Cobblemon Library 1.5.2 or newer within its declared version range.
           </p>
         </section>
 
@@ -287,14 +296,14 @@
           </div>
 
           <h2>Output directory</h2>
-          <pre><code>inspectmc/dumps</code></pre>
+          <pre><code>inspectmc/dumps/&lt;world&gt;/&lt;export&gt;</code></pre>
           <p>
-            Dumps are written relative to the game or server working directory. Every export keeps a timestamped archive and atomically updates a stable <code>*-latest.*</code> alias for scripts and bots.
+            Dumps are written relative to the game or server working directory, grouped by world and export type. Every export keeps a timestamped archive and atomically updates a stable <code>*-latest.*</code> alias in its folder for scripts and bots. In single-player and local worlds, result buttons can open the exported file or folder with the operating system's default application. Very long Excel cell values are shortened with a visible note; JSON and CSV retain the complete values.
           </p>
 
           <h2>Excel</h2>
           <p>
-            <code>/inspectmc dump biomes</code> defaults to a real <code>.xlsx</code> workbook. It opens on an explanatory Overview sheet, followed by a filterable Biomes summary and a normalized Biome Tags sheet with one biome/tag relationship per row. InspectMC reads these relationships from the live runtime biome registry, including loaded vanilla, modded and datapack-provided tags.
+            Excel exports use styled, wrapped cells, readable row heights, filters, frozen key columns and landscape print settings. The biome workbook opens on an explanatory Overview sheet, followed by a filterable Biomes summary and a normalized Biome Tags sheet with one biome/tag relationship per row. InspectMC reads these relationships from the live runtime biome registry, including loaded vanilla, modded and datapack-provided tags.
           </p>
 
           <h2>CSV</h2>
@@ -342,7 +351,7 @@
 
           <h2>Runtime API diagnostics</h2>
           <p>
-            When Cobblemon 1.8.1 to 1.8.x and OS Cobblemon Library 1.1.x are both available, InspectMC enables an additional read-only runtime integration.
+            When Cobblemon 1.8.2–1.8.4 and OS Cobblemon Library 1.5.2 or newer within its declared version range are both available, InspectMC enables an additional read-only runtime integration.
           </p>
           <div class="command"><code>/inspectmc cobblemon status</code><p>Report whether the optional integration is available.</p></div>
           <div class="command"><code>/inspectmc cobblemon entity [look [distance]|target &lt;selector&gt;]</code><p>Inspect Pokémon identity, form, shiny/Alpha state, aspects, labels, marks, types, ability category, size, owner, battle state and IV diagnostics.</p></div>
@@ -375,7 +384,7 @@
 
           <h2>Cobblemon commands are unavailable</h2>
           <p>
-            Base InspectMC features do not require Cobblemon. The deeper runtime integration requires both Cobblemon 1.8.1 to 1.8.x and OS Cobblemon Library 1.1.x. Run <code>/inspectmc cobblemon status</code> to inspect availability.
+            Base InspectMC features do not require Cobblemon. The deeper runtime integration requires Cobblemon 1.8.2–1.8.4 and OS Cobblemon Library 1.5.2 or newer within its declared version range. Run <code>/inspectmc cobblemon status</code> to inspect availability.
           </p>
 
           <h2>Spawn data looks stale</h2>
@@ -385,7 +394,7 @@
 
           <h2>Which Minecraft versions are supported?</h2>
           <p>
-            InspectMC 1.0.1 supports Minecraft 1.21.1, 26.2 and 26.3 on both Fabric and NeoForge. Install the JAR that exactly matches your Minecraft version and loader.
+            InspectMC 1.0.3 has dedicated Fabric and NeoForge builds for Minecraft 1.21.1, 26.2 and 26.3. Use Java 21 for 1.21.1 and Java 25 for 26.2 / 26.3.
           </p>
 
           <h2>Bug reports</h2>

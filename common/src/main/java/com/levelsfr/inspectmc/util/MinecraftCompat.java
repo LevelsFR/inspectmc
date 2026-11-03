@@ -55,7 +55,8 @@ public final class MinecraftCompat {
     public static CompoundTag saveEntity(Entity entity) {
         CompoundTag tag = new CompoundTag();
         for (Method method : entity.getClass().getMethods()) {
-            if (!method.getName().equals("saveWithoutId") || method.getParameterCount() != 1) {
+            if (!(method.getName().equals("saveWithoutId") || method.getName().equals("method_5647"))
+                    || method.getParameterCount() != 1) {
                 continue;
             }
             if (method.getParameterTypes()[0].isAssignableFrom(CompoundTag.class)) {
@@ -71,13 +72,10 @@ public final class MinecraftCompat {
     }
 
     public static List<String> nbtKeys(CompoundTag tag) {
-        try {
-            Object keys = tag.getClass().getMethod("getAllKeys").invoke(tag);
-            if (keys instanceof Iterable<?> iterable) {
-                return java.util.stream.StreamSupport.stream(iterable.spliterator(), false)
-                        .map(String::valueOf).sorted().toList();
-            }
-        } catch (ReflectiveOperationException ignored) {
+        Object keys = callNoArg(tag, "getAllKeys", "method_10541");
+        if (keys instanceof Iterable<?> iterable) {
+            return java.util.stream.StreamSupport.stream(iterable.spliterator(), false)
+                    .map(String::valueOf).sorted().toList();
         }
         return List.of();
     }
@@ -91,14 +89,14 @@ public final class MinecraftCompat {
     }
 
     public static Set<Long> forcedChunks(ServerLevel level) {
-        Object value = invoke(level, "getForcedChunks", "forcedChunks");
+        Object value = invoke(level, "getForcedChunks", "forcedChunks", "method_17984");
         return value instanceof Set<?> set ? set.stream().filter(Long.class::isInstance).map(Long.class::cast)
                 .collect(java.util.stream.Collectors.toUnmodifiableSet()) : Set.of();
     }
 
     public static String versionName() {
         Object version = net.minecraft.SharedConstants.getCurrentVersion();
-        Object name = invoke(version, "getName", "name");
+        Object name = invoke(version, "getName", "name", "method_48019");
         return name == null ? version.toString() : name.toString();
     }
 
@@ -141,12 +139,12 @@ public final class MinecraftCompat {
     }
 
     public static int chunkX(ChunkPos pos) {
-        Object value = invoke(pos, "x", "getX");
+        Object value = invoke(pos, "x", "getX", "method_8325");
         return value instanceof Number number ? number.intValue() : 0;
     }
 
     public static int chunkZ(ChunkPos pos) {
-        Object value = invoke(pos, "z", "getZ");
+        Object value = invoke(pos, "z", "getZ", "method_8332");
         return value instanceof Number number ? number.intValue() : 0;
     }
 
@@ -171,7 +169,11 @@ public final class MinecraftCompat {
             try {
                 return (long) ChunkPos.class.getMethod("toLong", int.class, int.class).invoke(null, x, z);
             } catch (ReflectiveOperationException exception) {
-                return ((long) z << 32) | (x & 0xffffffffL);
+                try {
+                    return (long) ChunkPos.class.getMethod("method_8331", int.class, int.class).invoke(null, x, z);
+                } catch (ReflectiveOperationException ignoredAgain) {
+                    return ((long) z << 32) | (x & 0xffffffffL);
+                }
             }
         }
     }

@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Base64;
+import java.util.List;
 import java.util.Locale;
 
 /** Client-side implementation behind the dump result open buttons. */
@@ -45,23 +46,52 @@ public final class DumpOpenUtil {
                 return OpenResult.failure("The InspectMC dump file no longer exists or is not supported.");
             }
 
-            if (!Desktop.isDesktopSupported()) {
-                return OpenResult.failure("The operating system cannot open files from Minecraft.");
-            }
-            Desktop.getDesktop().open(path.toFile());
+            openWithSystem(path);
             return OpenResult.success(path);
-        } catch (IllegalArgumentException | SecurityException | IOException exception) {
+        } catch (IllegalArgumentException exception) {
             return OpenResult.failure("Invalid InspectMC dump path.");
+        } catch (SecurityException exception) {
+            return OpenResult.failure("The operating system blocked the local open request.");
+        } catch (IOException exception) {
+            return OpenResult.failure("Could not launch the default application for this dump.");
         }
     }
 
     private static boolean isDumpDirectory(Path path) {
-        if (path == null || path.getFileName() == null || path.getParent() == null
-                || path.getParent().getFileName() == null) {
-            return false;
+        for (Path current = path; current != null; current = current.getParent()) {
+            Path parent = current.getParent();
+            if (parent != null && current.getFileName() != null && parent.getFileName() != null
+                    && current.getFileName().toString().equalsIgnoreCase("dumps")
+                    && parent.getFileName().toString().equalsIgnoreCase("inspectmc")) {
+                return true;
+            }
         }
-        return path.getFileName().toString().equalsIgnoreCase("dumps")
-                && path.getParent().getFileName().toString().equalsIgnoreCase("inspectmc");
+        return false;
+    }
+
+    private static void openWithSystem(Path path) throws IOException {
+        try {
+            if (Desktop.isDesktopSupported()) {
+                Desktop desktop = Desktop.getDesktop();
+                if (desktop.isSupported(Desktop.Action.OPEN)) {
+                    desktop.open(path.toFile());
+                    return;
+                }
+            }
+        } catch (IOException | UnsupportedOperationException | SecurityException ignored) {
+            // Use the operating system launcher when Java Desktop cannot open the file.
+        }
+
+        String operatingSystem = System.getProperty("os.name", "").toLowerCase(Locale.ROOT);
+        List<String> command = operatingSystem.startsWith("windows")
+                ? List.of("rundll32.exe", "url.dll,FileProtocolHandler", path.toString())
+                : operatingSystem.contains("mac")
+                ? List.of("open", path.toString())
+                : List.of("xdg-open", path.toString());
+        new ProcessBuilder(command)
+                .redirectOutput(ProcessBuilder.Redirect.DISCARD)
+                .redirectError(ProcessBuilder.Redirect.DISCARD)
+                .start();
     }
 
     private static boolean isDumpFile(Path path) {

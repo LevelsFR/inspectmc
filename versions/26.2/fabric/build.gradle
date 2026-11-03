@@ -20,6 +20,7 @@ loom {
 
 sourceSets.main.java.srcDirs = [
         rootProject.file('../../common/src/main/java'),
+        rootProject.file('../shared-modern/src/main/java'),
         rootProject.file('../../fabric/src/main/java'),
         project.file('src/main/java')
 ]
@@ -28,7 +29,8 @@ sourceSets.main.java.exclude(
         'com/levelsfr/inspectmc/cobblemon/CobblemonApiIntegration.java',
         'com/levelsfr/inspectmc/client/config/ClothConfigUnavailableScreen.java',
         'com/levelsfr/inspectmc/fabric/client/InspectMCFabricClient.java',
-        'com/levelsfr/inspectmc/inspection/BiomeInspector.java'
+        'com/levelsfr/inspectmc/inspection/BiomeInspector.java',
+        'com/levelsfr/inspectmc/dump/RecipeExportCompat.java'
 )
 
 dependencies {

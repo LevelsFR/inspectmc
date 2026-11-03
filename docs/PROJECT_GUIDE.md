@@ -2,13 +2,12 @@
 
 In-game inspection and export tools for modpack creators, datapack authors and developers.
 
-Source and publication snapshot: **2026-10-29**. This guide describes the checked-out source; a download page can contain an earlier release.
+Source and publication-status snapshot: **2026-11-03**. This guide describes the checked-out source; site listings can take time to reflect a new upload.
 
 ## Status and official links
 
 - [Source repository](https://github.com/LevelsFR/inspectmc/tree/main) (public).
-- [CurseForge](https://www.curseforge.com/minecraft/mc-mods/inspectmc) — published project verified under LevelsFR.
-- Modrinth: no matching project found in the public LevelsFR project list checked on 2026-10-21.
+- [CurseForge](https://www.curseforge.com/minecraft/mc-mods/inspectmc) — InspectMC project ID `1703471`.
 
 ## Features in the current source
 
@@ -22,9 +21,10 @@ Source and publication snapshot: **2026-10-29**. This guide describes the checke
 
 | Component | Value |
 | --- | --- |
-| Source version | `1.0.2` |
-| Minecraft baseline | `1.21.1` |
-| JDK | `21` |
+| Source version | `1.0.3` |
+| Minecraft release matrix | `1.21.1`, `26.2`, `26.3` |
+| Loaders | Fabric and NeoForge on all three versions |
+| JDK | `21` for 1.21.1; `25` for 26.2 and 26.3 |
 | Active branch | `main` |
 
 | Loader | Dependency | Declared constraint | Requirement |
@@ -45,14 +45,19 @@ Source and publication snapshot: **2026-10-29**. This guide describes the checke
 
 The table reflects loader metadata. Build-time version pins are in [gradle.properties](../gradle.properties). A dependency used only for compilation or optional integration is not automatically required for every installation.
 
-### Additional configured source targets
+### Release artifacts
 
-| Source directory | Minecraft | JDK | Version properties |
-| --- | --- | --- | --- |
-| `26.2` | `26.2` | `see target build` | [versions/26.2/gradle.properties](../versions/26.2/gradle.properties) |
-| `26.3` | `26.3` | `see target build` | [versions/26.3/gradle.properties](../versions/26.3/gradle.properties) |
+| Minecraft | Source directory | JDK | InspectMC version | Loader artifacts |
+| --- | --- | --- | --- | --- |
+| `1.21.1` | root modules | `21` | `1.0.3` | Fabric, NeoForge |
+| `26.2` | `versions/26.2` | `25` | `1.0.3` | Fabric, NeoForge |
+| `26.3` | `versions/26.3` | `25` | `1.0.3` | Fabric, NeoForge |
 
-A configured source target is not a statement that a matching public release or runtime qualification exists.
+The dependency metadata table above describes the Minecraft 1.21.1 modules. Minecraft 26.2 and 26.3 use version-specific metadata in their respective loader modules.
+
+Run `verifyRelease` to test the common code and build/check all six loader/version artifacts. `buildAllVersions` additionally stages the JARs under `build/releases/latest`.
+
+See [docs/RELEASING.md](RELEASING.md) for the manual release workflow and its required repository secrets and variables.
 
 ## Installation and first use
 

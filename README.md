@@ -4,15 +4,15 @@ InspectMC is an in-game development and inspection toolkit for Minecraft modpack
 
 **Documentation:** https://levelsfr.github.io/inspectmc/
 
-## Target
+## Supported versions
 
-- Minecraft 1.21.1 version: **1.0.2**
-- Minecraft **1.21.1**, **26.2** and **26.3**
-- **Fabric** and **NeoForge**
-- Java **21** for Minecraft 1.21.1
-- Java **25** for Minecraft 26.2 and 26.3 source builds
+| Minecraft | Java | Fabric | NeoForge | InspectMC |
+|---|---:|:---:|:---:|---:|
+| 1.21.1 | 21 | Yes | Yes | 1.0.3 |
+| 26.2 | 25 | Yes | Yes | 1.0.3 |
+| 26.3 | 25 | Yes | Yes | 1.0.3 |
 
-Use the JAR matching your Minecraft version and mod loader. The `buildAllVersions` Gradle task builds and stages all six supported loader/version artifacts.
+Install the JAR matching both your Minecraft version and loader. `buildAllVersions` builds and stages all six release JARs under `build/releases/latest`.
 
 ## Commands
 
@@ -51,9 +51,9 @@ Use the JAR matching your Minecraft version and mod loader. The `buildAllVersion
 - `/inspectmc dump report`
 - `/inspectmc pack <mods|datapacks|namespaces|registries> [page]`
 
-Dump files are written under `inspectmc/dumps` in the game or server working directory. Every export keeps a timestamped archive and atomically updates a stable `*-latest.*` alias for scripts and Discord bots.
+Dump files are written under `inspectmc/dumps/<world>/<export>` in the game or server working directory. Recipe, biome, tag, registry, spawn and report exports each have their own folder. Every export keeps a timestamped archive and atomically updates a stable `*-latest.*` alias in that folder for scripts and Discord bots. In single-player and local worlds, the result buttons open the file or export folder with the operating system's default application. Exceptionally long cell values are shortened in Excel for readability; the related JSON and CSV exports retain the full values.
 
-`/inspectmc dump biomes` defaults to a real Excel `.xlsx` workbook and accepts `biomes-with-tags` as an alias. The workbook opens on an explanatory `Overview` sheet, followed by a filterable `Biomes` summary and a normalized `Biome Tags` sheet with one biome/tag relation per row. Headers are styled, columns are sized and the first row remains visible while scrolling. Biome/tag relationships are collected from the live runtime biome registry, so loaded vanilla, modded and datapack-provided tags are preserved in biome exports.
+`/inspectmc dump biomes` defaults to a real Excel `.xlsx` workbook and accepts `biomes-with-tags` as an alias. The workbook opens on an explanatory `Overview` sheet, followed by a filterable `Biomes` summary and a normalized `Biome Tags` sheet with one biome/tag relation per row. Styled headers, adjusted column widths, wrapped lists, readable row heights, alternating row shading, frozen ID columns, filters and landscape print settings make the sheets easier to browse and print. Biome/tag relationships are collected from the live runtime biome registry, so loaded vanilla, modded and datapack-provided tags are preserved in biome exports.
 
 CSV remains the stable RFC 4180 machine format. JSON exports use schema version 2, UTC timestamps and common Minecraft, InspectMC and loader metadata. IDs, tags, relations and recipes are sorted deterministically. Recipe exports now include their type, group, result, quantity and accepted ingredient alternatives.
 
@@ -90,7 +90,7 @@ InspectMC detects Cobblemon world spawn pools through the datapack resources cur
 
 ## Optional Cobblemon API diagnostics
 
-When both Cobblemon 1.8.2–1.8.4 and OS Cobblemon Library 1.5.2+ are installed, InspectMC enables an optional runtime integration. `/inspectmc inspect entity` automatically adds species, form, shiny/Alpha state, aspects, labels, marks, types, ability category, size, owner, battle state and IV diagnostics for a targeted Cobblemon Pokémon. The dedicated `/inspectmc cobblemon entity` command exposes the same view directly.
+On Minecraft 1.21.1, when both Cobblemon 1.8.2–1.8.4 and OS Cobblemon Library 1.5.2+ are installed, InspectMC enables an optional runtime integration. `/inspectmc inspect entity` automatically adds species, form, shiny/Alpha state, aspects, labels, marks, types, ability category, size, owner, battle state and IV diagnostics for a targeted Cobblemon Pokémon. The dedicated `/inspectmc cobblemon entity` command exposes the same view directly. The 26.2 and 26.3 builds do not include the Cobblemon 1.8.x API integration.
 
 `/inspectmc cobblemon player [player]` summarizes Party, PC and Pokédex progress. `/inspectmc cobblemon find <property_query>` searches the executing player's owned Pokémon with Cobblemon's native property syntax, for example `species=pikachu shiny=true`; operators can use `find player <player> <property_query>` for another player. `/inspectmc cobblemon status` reports whether the optional integration is available.
 
@@ -135,4 +135,3 @@ Looking at blocks, inspecting the held item/current biome/self, and registry sea
 
 - [Source repository](https://github.com/LevelsFR/inspectmc/tree/main) (public).
 - [CurseForge](https://www.curseforge.com/minecraft/mc-mods/inspectmc) — published project verified under LevelsFR.
-- Modrinth: no matching project found in the public LevelsFR project list checked on 2026-10-21.
