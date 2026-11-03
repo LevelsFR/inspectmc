@@ -37,10 +37,7 @@ public final class IdentifierCompat {
     }
 
     public static String resourceKeyId(Object key) {
-        Object id = invokeNoArg(key, "identifier");
-        if (id == null) {
-            id = invokeNoArg(key, "location");
-        }
+        Object id = invokeNoArg(key, "identifier", "location", "method_29177", "comp_327");
         return id == null ? value(key) : value(id);
     }
 
@@ -49,7 +46,8 @@ public final class IdentifierCompat {
         if (parsed != null) {
             return parsed;
         }
-        return invokeStatic("net.minecraft.resources.ResourceLocation", "parse", id);
+        parsed = invokeStatic("net.minecraft.resources.ResourceLocation", "parse", id);
+        return parsed != null ? parsed : invokeStatic("net.minecraft.class_2960", "method_60654", id);
     }
 
     public static Object withDefaultNamespace(String path) {
@@ -57,7 +55,8 @@ public final class IdentifierCompat {
         if (parsed != null) {
             return parsed;
         }
-        return invokeStatic("net.minecraft.resources.ResourceLocation", "withDefaultNamespace", path);
+        parsed = invokeStatic("net.minecraft.resources.ResourceLocation", "withDefaultNamespace", path);
+        return parsed != null ? parsed : invokeStatic("net.minecraft.class_2960", "method_60656", path);
     }
 
     public static Object fromNamespaceAndPath(String namespace, String path) {
@@ -65,7 +64,8 @@ public final class IdentifierCompat {
         if (parsed != null) {
             return parsed;
         }
-        return invokeStatic("net.minecraft.resources.ResourceLocation", "fromNamespaceAndPath", namespace, path);
+        parsed = invokeStatic("net.minecraft.resources.ResourceLocation", "fromNamespaceAndPath", namespace, path);
+        return parsed != null ? parsed : invokeStatic("net.minecraft.class_2960", "method_60655", namespace, path);
     }
 
     public static ArgumentType<?> argumentType() {
@@ -97,7 +97,7 @@ public final class IdentifierCompat {
     }
 
     public static boolean registryContains(Registry<?> registry, String id) {
-        Object result = invokeOneArg(registry, "containsKey", parse(id));
+        Object result = invokeOneArg(registry, parse(id), "containsKey", "method_10250");
         return result instanceof Boolean booleanValue && booleanValue;
     }
 
@@ -112,13 +112,19 @@ public final class IdentifierCompat {
 
     public static boolean registryHasTag(Registry<?> registry, ResourceKey<?> registryKey, String id) {
         Object tag = invokeStatic("net.minecraft.tags.TagKey", "create", registryKey, parse(id));
-        Object result = invokeOneArg(registry, "getTag", tag);
+        if (tag == null) {
+            tag = invokeStatic("net.minecraft.class_6862", "method_40092", registryKey, parse(id));
+        }
+        Object result = invokeOneArg(registry, tag, "getTag", "method_40266");
         return result instanceof java.util.Optional<?> optional && optional.isPresent();
     }
 
     public static boolean holderHasTag(Holder<?> holder, ResourceKey<?> registryKey, String id) {
         Object tag = invokeStatic("net.minecraft.tags.TagKey", "create", registryKey, parse(id));
-        Object result = invokeOneArg(holder, "is", tag);
+        if (tag == null) {
+            tag = invokeStatic("net.minecraft.class_6862", "method_40092", registryKey, parse(id));
+        }
+        Object result = invokeOneArg(holder, tag, "is", "method_40220");
         return result instanceof Boolean booleanValue && booleanValue;
     }
 
@@ -131,10 +137,7 @@ public final class IdentifierCompat {
     }
 
     public static List<String> tags(Object target) {
-        Object tags = invokeNoArg(target, "getTags");
-        if (tags == null) {
-            tags = invokeNoArg(target, "tags");
-        }
+        Object tags = invokeNoArg(target, "getTags", "tags", "method_40133", "method_40144", "method_5752");
         if (tags instanceof Stream<?> stream) {
             return stream.map(IdentifierCompat::resourceKeyId).sorted().toList();
         }
@@ -142,7 +145,7 @@ public final class IdentifierCompat {
     }
 
     public static String descriptionId(Object target) {
-        Object value = invokeNoArg(target, "getDescriptionId");
+        Object value = invokeNoArg(target, "getDescriptionId", "method_7876");
         return value == null ? "<unknown>" : value.toString();
     }
 
@@ -153,7 +156,19 @@ public final class IdentifierCompat {
                 if (!method.getName().equals(methodName) || method.getParameterCount() != arguments.length) {
                     continue;
                 }
-                return method.invoke(null, arguments);
+                Class<?>[] parameterTypes = method.getParameterTypes();
+                boolean compatible = true;
+                for (int index = 0; index < arguments.length; index++) {
+                    if (arguments[index] == null
+                            ? parameterTypes[index].isPrimitive()
+                            : !parameterTypes[index].isAssignableFrom(arguments[index].getClass())) {
+                        compatible = false;
+                        break;
+                    }
+                }
+                if (compatible) {
+                    return method.invoke(null, arguments);
+                }
             }
         } catch (ClassNotFoundException | IllegalAccessException | InvocationTargetException ignored) {
             return null;
@@ -161,30 +176,33 @@ public final class IdentifierCompat {
         return null;
     }
 
-    private static Object invokeNoArg(Object target, String methodName) {
+    private static Object invokeNoArg(Object target, String... methodNames) {
         if (target == null) {
             return null;
         }
-        try {
-            return target.getClass().getMethod(methodName).invoke(target);
-        } catch (ReflectiveOperationException ignored) {
-            return null;
+        for (String methodName : methodNames) {
+            try {
+                return target.getClass().getMethod(methodName).invoke(target);
+            } catch (ReflectiveOperationException ignored) {
+            }
         }
+        return null;
     }
 
-    private static Object invokeOneArg(Object target, String methodName, Object argument) {
+    private static Object invokeOneArg(Object target, Object argument, String... methodNames) {
         if (target == null || argument == null) {
             return null;
         }
-        try {
-            for (Method method : target.getClass().getMethods()) {
-                if (method.getName().equals(methodName) && method.getParameterCount() == 1
-                        && method.getParameterTypes()[0].isAssignableFrom(argument.getClass())) {
-                    return method.invoke(target, argument);
+        for (String methodName : methodNames) {
+            try {
+                for (Method method : target.getClass().getMethods()) {
+                    if (method.getName().equals(methodName) && method.getParameterCount() == 1
+                            && method.getParameterTypes()[0].isAssignableFrom(argument.getClass())) {
+                        return method.invoke(target, argument);
+                    }
                 }
+            } catch (ReflectiveOperationException ignored) {
             }
-        } catch (ReflectiveOperationException ignored) {
-            return null;
         }
         return null;
     }

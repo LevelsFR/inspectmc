@@ -88,8 +88,8 @@ subprojects {
 
 tasks.register('verifyRelease') {
     group = 'verification'
-    description = 'Runs all checks, builds both loader JARs and verifies release metadata.'
-    dependsOn ':common:check', ':fabric:assemble', ':neoforge:assemble'
+    description = 'Runs common checks, builds every configured loader/version JAR and verifies release metadata.'
+    dependsOn ':common:check'
 
     doLast {
         def fabricMetadata = file('fabric/src/main/resources/fabric.mod.json').getText('UTF-8')
@@ -103,10 +103,26 @@ tasks.register('verifyRelease') {
         if (!file('LICENSE').isFile() || !file('CHANGELOG.md').isFile()) {
             throw new GradleException('Official releases require LICENSE and CHANGELOG.md')
         }
-        [
+        def releaseArtifacts = [
                 file("fabric/build/libs/${archives_name}-fabric-${version}.jar"),
-                file("neoforge/build/libs/${archives_name}-neoforge-${version}.jar")
-        ].each { artifact ->
+                file("neoforge/build/libs/${archives_name}-neoforge-${version}.jar"),
+                file("versions/26.2/fabric/build/libs/${archives_name}-fabric-${version}.jar"),
+                file("versions/26.2/neoforge/build/libs/${archives_name}-neoforge-${version}.jar"),
+                file("versions/26.3/fabric/build/libs/${archives_name}-fabric-${version}.jar"),
+                file("versions/26.3/neoforge/build/libs/${archives_name}-neoforge-${version}.jar")
+        ]
+        ['26.2', '26.3'].each { target ->
+            def targetFabricMetadata = file("versions/${target}/fabric/src/main/resources/fabric.mod.json").getText('UTF-8')
+            def targetNeoForgeMetadata = file("versions/${target}/neoforge/src/main/resources/META-INF/neoforge.mods.toml").getText('UTF-8')
+            if (!targetFabricMetadata.contains('"minecraft": "=' + target + '"')) {
+                throw new GradleException("Fabric metadata must target exactly Minecraft ${target}")
+            }
+            if (!targetNeoForgeMetadata.contains('versionRange = "[' + target + ']"')) {
+                throw new GradleException("NeoForge metadata must target exactly Minecraft ${target}")
+            }
+        }
+
+        releaseArtifacts.each { artifact ->
             if (!artifact.isFile() || artifact.length() == 0L) {
                 throw new GradleException("Missing release artifact: ${artifact}")
             }
@@ -166,6 +182,7 @@ def configureVersionBuild = { Exec task, File projectDir, List<String> arguments
 def buildVersion1211 = tasks.register('buildVersion1211', Exec) {
     group = 'build'
     description = 'Builds the Minecraft 1.21.1 Fabric and NeoForge artifacts.'
+    dependsOn ':common:check'
     configureVersionBuild(delegate, rootDir,
             [':fabric:build', ':neoforge:build', '--no-parallel', '--no-daemon', '--console=plain'],
             21, 'java21_home', 'JAVA_21_HOME')
@@ -187,6 +204,10 @@ def buildVersion263 = tasks.register('buildVersion263', Exec) {
     configureVersionBuild(delegate, file('versions/26.3'),
             [':fabric:build', ':neoforge:build', '--no-parallel', '--no-daemon', '--console=plain'],
             25, 'java25_home', 'JAVA_25_HOME')
+}
+
+tasks.named('verifyRelease') {
+    dependsOn(buildVersion263)
 }
 
 tasks.register('buildAllVersions') {

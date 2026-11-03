@@ -1,0 +1,38 @@
+name: Build all versions
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Set up Java 21
+        uses: actions/setup-java@dded0888837ed1f317902acf8a20df0ad188d165 # v5.0.0
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: gradle
+
+      - name: Prepare Cobblemon compile dependency
+        uses: ./.github/actions/setup-oscl
+
+      - name: Set up Java 25
+        uses: actions/setup-java@dded0888837ed1f317902acf8a20df0ad188d165 # v5.0.0
+        with:
+          distribution: temurin
+          java-version: '25'
+
+      - name: Verify all loaders and Minecraft versions
+        run: ./gradlew -Pjava21_home="$JAVA_HOME_21_X64" -Pjava25_home="$JAVA_HOME_25_X64" verifyRelease --no-daemon --console=plain

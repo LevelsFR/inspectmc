@@ -1,0 +1,17 @@
+name: Prepare OS Cobblemon Library
+description: Build the pinned OSCL 1.5.2 compile-only dependency into runner-local Maven.
+runs:
+  using: composite
+  steps:
+    - name: Check out pinned OSCL source
+      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      with:
+        repository: LevelsFR/OS-Cobblemon-Library
+        ref: 7775087c601de4b41bad1c0186794f8083822695
+        path: .ci/os-cobblemon-library
+        persist-credentials: false
+
+    - name: Publish compile-only artifacts to Maven Local
+      shell: bash
+      working-directory: .ci/os-cobblemon-library
+      run: bash ./gradlew publishAllToMavenLocal --no-daemon --console=plain
