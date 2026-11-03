@@ -31,20 +31,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Set up Java 21
-        uses: actions/setup-java@dded0888837ed1f317902acf8a20df0ad188d165 # v5.0.0
-        with:
-          distribution: temurin
-          java-version: '21'
-          cache: gradle
-
-      - name: Set up Java 25
-        uses: actions/setup-java@dded0888837ed1f317902acf8a20df0ad188d165 # v5.0.0
-        with:
-          distribution: temurin
-          java-version: '25'
-
-      - name: Validate release version
+      - name: Validate release branch and version
         env:
           RELEASE_VERSION: ${{ inputs.version }}
         run: |
@@ -62,6 +49,22 @@ jobs:
             target_version="$(sed -n 's/^mod_version=//p' "versions/$target/gradle.properties")"
             [[ "$target_version" == "$RELEASE_VERSION" ]] || { echo "Minecraft $target is set to $target_version, not $RELEASE_VERSION." >&2; exit 1; }
           done
+
+      - name: Set up Java 21
+        uses: actions/setup-java@dded0888837ed1f317902acf8a20df0ad188d165 # v5.0.0
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: gradle
+
+      - name: Prepare Cobblemon compile dependency
+        uses: ./.github/actions/setup-oscl
+
+      - name: Set up Java 25
+        uses: actions/setup-java@dded0888837ed1f317902acf8a20df0ad188d165 # v5.0.0
+        with:
+          distribution: temurin
+          java-version: '25'
 
       - name: Verify and stage all six artifacts
         run: ./gradlew -Pjava21_home="$JAVA_HOME_21_X64" -Pjava25_home="$JAVA_HOME_25_X64" verifyRelease buildAllVersions --no-daemon --console=plain

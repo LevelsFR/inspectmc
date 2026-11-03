@@ -12,6 +12,8 @@ Use Java 21 and Java 25, then run:
 
 `verifyRelease` runs the common checks, builds all six artifacts, and checks their Minecraft and InspectMC versions. `buildAllVersions` also stages them under `build/releases/latest`.
 
+The 1.21.1 Cobblemon integration compiles against OS Cobblemon Library 1.5.2. GitHub Actions checks out a pinned OSCL source commit and publishes its compile-only artifacts to the runner's Maven Local before building InspectMC. The release JARs do not bundle OSCL. For local source builds, publish OSCL 1.5.2 to Maven Local first.
+
 ## GitHub Actions
 
 - **Build all versions** runs for pushes to `main` and pull requests. It does not publish files.
