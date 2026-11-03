@@ -89,7 +89,7 @@ subprojects {
 tasks.register('verifyRelease') {
     group = 'verification'
     description = 'Runs common checks, builds every configured loader/version JAR and verifies release metadata.'
-    dependsOn ':common:check', ':fabric:assemble', ':neoforge:assemble'
+    dependsOn ':common:check'
 
     doLast {
         def fabricMetadata = file('fabric/src/main/resources/fabric.mod.json').getText('UTF-8')
@@ -182,6 +182,7 @@ def configureVersionBuild = { Exec task, File projectDir, List<String> arguments
 def buildVersion1211 = tasks.register('buildVersion1211', Exec) {
     group = 'build'
     description = 'Builds the Minecraft 1.21.1 Fabric and NeoForge artifacts.'
+    dependsOn ':common:check'
     configureVersionBuild(delegate, rootDir,
             [':fabric:build', ':neoforge:build', '--no-parallel', '--no-daemon', '--console=plain'],
             21, 'java21_home', 'JAVA_21_HOME')
